@@ -1,16 +1,14 @@
-﻿using System;
-using System.IO;
-using System.Text;
-using CameraControl.Devices.TransferProtocol.PtpIp;
+﻿using CameraControl.Devices.TransferProtocol.PtpIp;
 using PortableDeviceLib;
+using System.Text;
 
 namespace CameraControl.Devices.TransferProtocol
 {
-    public class PtpIpProtocol: ITransferProtocol
+    public class PtpIpProtocol : ITransferProtocol
     {
         public static uint TransactionId { get; set; }
 
-        private object _locker = new object();
+        private readonly object _locker = new object();
 
         public string Model { get; private set; }
         public string Manufacturer { get; private set; }
@@ -18,7 +16,7 @@ namespace CameraControl.Devices.TransferProtocol
         public bool IsConnected { get; set; }
         public string DeviceId { get; private set; }
 
-        private PtpIpClient _client;
+        private readonly PtpIpClient _client;
 
         public PtpIpProtocol(PtpIpClient client)
         {
@@ -93,7 +91,7 @@ namespace CameraControl.Devices.TransferProtocol
             SerialNumber = Encoding.Unicode.GetString(res.Data, index, strlen4 - 2);
         }
 
-        public MTPDataResponse ExecuteReadBigData(uint code,Stream stream, StillImageDevice.TransferCallback callback, params uint[] parameters)
+        public MTPDataResponse ExecuteReadBigData(uint code, Stream stream, StillImageDevice.TransferCallback callback, params uint[] parameters)
         {
             lock (_locker)
             {
@@ -123,7 +121,7 @@ namespace CameraControl.Devices.TransferProtocol
         {
             lock (_locker)
             {
-                var cmd = new CmdRequest(code) {Parameters = parameters};
+                var cmd = new CmdRequest(code) { Parameters = parameters };
                 _client.Write(cmd);
 
                 var res1 = _client.Read();
@@ -132,15 +130,15 @@ namespace CameraControl.Devices.TransferProtocol
                 var response = res1 as CmdResponse;
                 if (response != null)
                 {
-                    return new MTPDataResponse() {ErrorCode = (uint) response.Code};
+                    return new MTPDataResponse() { ErrorCode = (uint)response.Code };
                 }
 
                 var response1 = res1 as StartDataPacket;
                 var res2 = _client.Read();
-                var res3 = (EndDataPacket) res2;
+                var res3 = (EndDataPacket)res2;
 
                 var res4 = _client.Read();
-                return new MTPDataResponse() {Data = res3.Data};
+                return new MTPDataResponse() { Data = res3.Data };
             }
         }
 
@@ -149,7 +147,7 @@ namespace CameraControl.Devices.TransferProtocol
         {
             lock (_locker)
             {
-                _client.Write(new CmdRequest(code) {Parameters = parameters});
+                _client.Write(new CmdRequest(code) { Parameters = parameters });
 
                 var res1 = _client.Read();
 
@@ -157,7 +155,7 @@ namespace CameraControl.Devices.TransferProtocol
                 var response = res1 as CmdResponse;
                 if (response != null)
                 {
-                    return (uint) response.Code;
+                    return (uint)response.Code;
                 }
                 return 0;
             }
@@ -170,16 +168,16 @@ namespace CameraControl.Devices.TransferProtocol
             //7<-
             lock (_locker)
             {
-                var cmd = new CmdRequest(code,2) {Parameters = parameters};
+                var cmd = new CmdRequest(code, 2) { Parameters = parameters };
                 _client.Write(cmd);
-                _client.Write(new StartDataPacket() {Data = data, TransactionID = cmd.TransactionID});
+                _client.Write(new StartDataPacket() { Data = data, TransactionID = cmd.TransactionID });
 
                 var res1 = _client.Read();
 
                 var response = res1 as CmdResponse;
                 if (response != null)
                 {
-                    return (uint) response.Code;
+                    return (uint)response.Code;
                 }
             }
             return 0;

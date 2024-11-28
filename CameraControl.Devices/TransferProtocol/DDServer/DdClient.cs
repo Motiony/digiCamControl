@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
+﻿using ddserverTest;
+using PortableDeviceLib;
 using System.Net.Sockets;
 using System.Text;
-using System.Threading;
-using PortableDeviceLib;
-using ddserverTest;
 
 namespace CameraControl.Devices.TransferProtocol.DDServer
 {
@@ -60,7 +56,7 @@ namespace CameraControl.Devices.TransferProtocol.DDServer
                 ms.WriteByte((byte)(0xff & (totalsize >> 16)));
                 ms.WriteByte((byte)(0xff & (totalsize >> 24)));
                 container.Write(ms);
-                _inerStream.Write(ms.ToArray(), 0, (int) ms.Length);
+                _inerStream.Write(ms.ToArray(), 0, (int)ms.Length);
             }
         }
 
@@ -98,7 +94,7 @@ namespace CameraControl.Devices.TransferProtocol.DDServer
                     if (synchronized)
                         Monitor.Exit(_commandLock);
                     return new ResponseBlockContainer(header, _inerStream);
-                        //Give current instance as stream, because we need keep track on the distance to next header
+                //Give current instance as stream, because we need keep track on the distance to next header
                 case ContainerType.CommandBlock:
                 case ContainerType.EventBlock:
                     throw new Exception("Invalid container type. " + header.ContainerType);
@@ -133,7 +129,7 @@ namespace CameraControl.Devices.TransferProtocol.DDServer
         public bool Connect(DdServerDevice device)
         {
             _lastdevice = device;
-            Write(new CommandBlockContainer(0001, (uint) device.VendorId, (uint) device.ProductId));
+            Write(new CommandBlockContainer(0001, (uint)device.VendorId, (uint)device.ProductId));
             int len = ReadInt();
             //Write(new CommandBlockContainer(0x1001));
             Container c = ReadContainer();
@@ -151,7 +147,7 @@ namespace CameraControl.Devices.TransferProtocol.DDServer
         {
             return _client.Connected;
         }
-       
-        
+
+
     }
 }

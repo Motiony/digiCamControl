@@ -1,8 +1,5 @@
-﻿using System;
-using System.IO;
+﻿using PortableDeviceLib;
 using System.Net.Sockets;
-using ddserverTest;
-using PortableDeviceLib;
 
 namespace CameraControl.Devices.TransferProtocol.PtpIp
 {
@@ -14,7 +11,7 @@ namespace CameraControl.Devices.TransferProtocol.PtpIp
         private Stream _eventinerStream;
         private TcpClient _eventclient;
 
-        private object _commandLock = new object();
+        private readonly object _commandLock = new object();
 
         public bool Open(string ip, int port)
         {

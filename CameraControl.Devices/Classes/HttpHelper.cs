@@ -1,16 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Net;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Net;
 
 namespace CameraControl.Devices.Classes
 {
     public static class HttpHelper
     {
-        public static void DownLoadFileByWebRequest(string urlAddress, string filePath, ICameraDevice device,long size=0)
+        public static void DownLoadFileByWebRequest(string urlAddress, string filePath, ICameraDevice device, long size = 0)
         {
             try
             {
@@ -26,7 +20,7 @@ namespace CameraControl.Devices.Classes
                 }
 
                 FileStream os = new FileStream(filePath, FileMode.OpenOrCreate, FileAccess.Write);
-                byte[] buff = new byte[1024*1024];
+                byte[] buff = new byte[1024 * 1024];
                 int c = 0;
                 int totalsize = 0;
                 while ((c = s.Read(buff, 0, buff.Length)) > 0)
@@ -36,19 +30,19 @@ namespace CameraControl.Devices.Classes
                     totalsize += c;
                     if (size > 0)
                     {
-                        device.TransferProgress = (uint)(totalsize/(double)size*100.0);
+                        device.TransferProgress = (uint)(totalsize / (double)size * 100.0);
                     }
                     else
                     {
                         device.TransferProgress += 1;
                     }
-                    
+
                 }
                 os.Close();
                 s.Close();
                 device.TransferProgress = 100;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Log.Error("Error download file", ex);
             }

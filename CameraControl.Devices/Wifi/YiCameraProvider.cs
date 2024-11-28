@@ -1,13 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using CameraControl.Devices.Classes;
-using CameraControl.Devices.Custom;
+﻿using CameraControl.Devices.Classes;
 using CameraControl.Devices.Others;
 using CameraControl.Devices.TransferProtocol;
-using CameraControl.Devices.TransferProtocol.PtpIp;
 
 namespace CameraControl.Devices.Wifi
 {
@@ -41,6 +34,6 @@ namespace CameraControl.Devices.Wifi
             Name = "Xiaomi Yi action camera";
             DefaultIp = "192.168.42.1";
         }
-        
+
     }
 }

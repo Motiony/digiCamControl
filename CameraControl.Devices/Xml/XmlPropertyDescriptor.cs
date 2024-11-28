@@ -28,12 +28,8 @@
 
 #region
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Xml.Serialization;
 using CameraControl.Devices.Classes;
+using System.Xml.Serialization;
 
 #endregion
 
@@ -76,13 +72,13 @@ namespace CameraControl.Devices.Xml
 
         [XmlAttribute]
         public uint DataForm { get; set; }
-        
+
         [XmlAttribute]
         public long MinVal { get; set; }
-        
+
         [XmlAttribute]
         public long MaxVal { get; set; }
-        
+
         [XmlAttribute]
         public long Inc { get; set; }
 

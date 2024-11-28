@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using PortableDeviceLib;
+﻿using PortableDeviceLib;
 
 namespace CameraControl.Devices.TransferProtocol
 {
@@ -11,7 +7,7 @@ namespace CameraControl.Devices.TransferProtocol
         public MtpProtocol(string deviceId)
             : base(deviceId)
         {
-            
+
         }
 
     }

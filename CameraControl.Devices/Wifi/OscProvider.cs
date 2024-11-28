@@ -1,15 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using CameraControl.Devices;
-using CameraControl.Devices.Classes;
+﻿using CameraControl.Devices.Classes;
 using CameraControl.Devices.Others;
 
 namespace CameraControl.Devices.Wifi
 {
-    public class OscProvider: IWifiDeviceProvider
+    public class OscProvider : IWifiDeviceProvider
     {
         public DeviceDescriptor Connect(string address)
         {

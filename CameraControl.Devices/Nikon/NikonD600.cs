@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Text;
-using CameraControl.Devices.Classes;
+﻿using CameraControl.Devices.Classes;
 using PortableDeviceLib;
+using System.Text;
 
 namespace CameraControl.Devices.Nikon
 {
@@ -163,17 +159,21 @@ namespace CameraControl.Devices.Nikon
             res.AddValues("OFF", 0);
             res.ReloadValues();
             res.ValueChanged +=
-                (sender, key, val) => SetProperty(CONST_CMD_SetDevicePropValue, new[] {(byte) val}, res.Code);
+                (sender, key, val) => SetProperty(CONST_CMD_SetDevicePropValue, new[] { (byte)val }, res.Code);
             return res;
         }
 
         protected override void InitShutterSpeed()
         {
-            NormalShutterSpeed = new PropertyValue<long>();
-            NormalShutterSpeed.Name = "ShutterSpeed";
+            NormalShutterSpeed = new PropertyValue<long>
+            {
+                Name = "ShutterSpeed"
+            };
             NormalShutterSpeed.ValueChanged += ShutterSpeed_ValueChanged;
-            MovieShutterSpeed = new PropertyValue<long>();
-            MovieShutterSpeed.Name = "ShutterSpeed";
+            MovieShutterSpeed = new PropertyValue<long>
+            {
+                Name = "ShutterSpeed"
+            };
             MovieShutterSpeed.ValueChanged += MovieShutterSpeed_ValueChanged;
             ReInitShutterSpeed();
         }

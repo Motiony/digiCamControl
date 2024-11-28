@@ -28,7 +28,6 @@
 
 #region
 
-using System.IO;
 using CameraControl.Devices.Classes;
 
 #endregion
@@ -46,8 +45,10 @@ namespace CameraControl.Devices.Nikon
 
         public override LiveViewData GetLiveViewImage()
         {
-            LiveViewData viewData = new LiveViewData();
-            viewData.HaveFocusData = true;
+            LiveViewData viewData = new LiveViewData
+            {
+                HaveFocusData = true
+            };
 
             const int headerSize = 64;
 
@@ -64,8 +65,8 @@ namespace CameraControl.Devices.Nikon
             int cbBytesRead = result.Data.Length;
             GetAdditionalLiveViewData(viewData, result.Data);
 
-            MemoryStream copy = new MemoryStream((int) cbBytesRead - headerSize);
-            copy.Write(result.Data, headerSize, (int)cbBytesRead - headerSize);
+            MemoryStream copy = new MemoryStream(cbBytesRead - headerSize);
+            copy.Write(result.Data, headerSize, cbBytesRead - headerSize);
             copy.Close();
             viewData.ImageData = copy.GetBuffer();
 

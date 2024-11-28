@@ -28,11 +28,9 @@
 
 #region
 
-using System.Collections.Generic;
-using System.Linq;
-using Canon.Eos.Framework;
-
 #endregion
+
+using Canon.Eos.Framework;
 
 namespace CameraControl.Devices.Classes
 {
@@ -42,7 +40,7 @@ namespace CameraControl.Devices.Classes
 
         public DeviceDescriptorEnumerator()
         {
-            Devices = new List<DeviceDescriptor>();
+            Devices = [];
         }
 
         public DeviceDescriptor GetBySerialNumber(string serial)

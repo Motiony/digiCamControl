@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using CameraControl.Devices.Classes;
+﻿using CameraControl.Devices.Classes;
 using PortableDeviceLib;
 
 namespace CameraControl.Devices.Nikon
@@ -13,15 +9,15 @@ namespace CameraControl.Devices.Nikon
         {
             base.Init(deviceDescriptor);
             Properties.Add(InitFocalLength());
-            ExposureCompensation = new PropertyValue<long> {Available = false};
-            ExposureMeteringMode = new PropertyValue<long> {Available = false};
-            FNumber = new PropertyValue<long> {Available = false};
-            IsoNumber = new PropertyValue<long> {Available = false};
-            CompressionSetting = new PropertyValue<long> {Available = false};
-            Mode = new PropertyValue<long>() {Available = false};
-            ShutterSpeed = new PropertyValue<long>() {Available = false};
-            WhiteBalance = new PropertyValue<long>() {Available = false};
-            FocusMode = new PropertyValue<long>() {Available = false};
+            ExposureCompensation = new PropertyValue<long> { Available = false };
+            ExposureMeteringMode = new PropertyValue<long> { Available = false };
+            FNumber = new PropertyValue<long> { Available = false };
+            IsoNumber = new PropertyValue<long> { Available = false };
+            CompressionSetting = new PropertyValue<long> { Available = false };
+            Mode = new PropertyValue<long>() { Available = false };
+            ShutterSpeed = new PropertyValue<long>() { Available = false };
+            WhiteBalance = new PropertyValue<long>() { Available = false };
+            FocusMode = new PropertyValue<long>() { Available = false };
 
             StillImageDevice imageDevice = StillImageDevice as StillImageDevice;
             if (imageDevice != null)

@@ -1,22 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
+﻿using Newtonsoft.Json;
+using PortableDeviceLib;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Windows;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using PortableDeviceLib;
 
 namespace CameraControl.Devices.TransferProtocol
 {
     public class YiCameraProtocol : ITransferProtocol
     {
-        private object _locker = new object();
+        private readonly object _locker = new object();
         public event DataReceiverdHandler DataReceiverd;
 
         public delegate void DataReceiverdHandler(object sender, string data);
@@ -25,8 +17,8 @@ namespace CameraControl.Devices.TransferProtocol
 
         // My Attributes
         private Socket m_sock;						// Server connection
-        private byte[] m_byBuff = new byte[256];	// Recieved data buffer
-        private int bracker = 0;
+        private readonly byte[] m_byBuff = new byte[256];	// Recieved data buffer
+        private readonly int bracker = 0;
         private string data = "";
 
         public string Ip { get; set; }
@@ -81,7 +73,7 @@ namespace CameraControl.Devices.TransferProtocol
                     throw new Exception("Unable to get token.");
 
             }
-//            SendCommand(3);
+            //            SendCommand(3);
         }
 
         public void SendCommand(int command)
@@ -92,18 +84,18 @@ namespace CameraControl.Devices.TransferProtocol
 
         public void SendCommand(int command, string param)
         {
-                var data = String.Format("{{\"msg_id\":{0},\"param\":\"{1}\",\"token\":{2}}}", command, param,
-                    Token ?? "0");
-                m_sock.Send(Encoding.UTF8.GetBytes(data));
+            var data = String.Format("{{\"msg_id\":{0},\"param\":\"{1}\",\"token\":{2}}}", command, param,
+                Token ?? "0");
+            m_sock.Send(Encoding.UTF8.GetBytes(data));
         }
 
         public void SendValue(string param, string value)
         {
-                var data = String.Format("{{\"type\":\"{0}\",\"msg_id\":2,\"param\":\"{1}\",\"token\":{2}}}", param,
-                    value,
-                    Token ?? "0");
+            var data = String.Format("{{\"type\":\"{0}\",\"msg_id\":2,\"param\":\"{1}\",\"token\":{2}}}", param,
+                value,
+                Token ?? "0");
 
-                m_sock.Send(Encoding.UTF8.GetBytes(data));
+            m_sock.Send(Encoding.UTF8.GetBytes(data));
         }
 
         public void OnConnect(IAsyncResult ar)
@@ -122,7 +114,7 @@ namespace CameraControl.Devices.TransferProtocol
             }
             catch (Exception ex)
             {
-                Log.Error("OnRecievedData", ex);   
+                Log.Error("OnRecievedData", ex);
             }
         }
 
@@ -152,12 +144,12 @@ namespace CameraControl.Devices.TransferProtocol
                             var datas = data.Split(new[] { "|" }, StringSplitOptions.RemoveEmptyEntries);
                             foreach (string s in datas)
                             {
-                                ProcessData(s);                            
+                                ProcessData(s);
                             }
                         }
                         else
                         {
-                            ProcessData(data);                            
+                            ProcessData(data);
                         }
                         data = "";
                     }
@@ -184,7 +176,7 @@ namespace CameraControl.Devices.TransferProtocol
             try
             {
                 dynamic resp = JsonConvert.DeserializeObject(data);
-                switch ((string) resp.msg_id)
+                switch ((string)resp.msg_id)
                 {
                     case "257": // token
                         Token = resp.param;
@@ -238,7 +230,7 @@ namespace CameraControl.Devices.TransferProtocol
 
         public void Disconnect()
         {
-            
+
         }
 
         protected virtual void OnDataReceiverd(string data)

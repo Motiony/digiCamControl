@@ -1,16 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.IO;
-using System.Linq;
-using System.Net;
-using System.Text;
-using System.Threading;
-using CameraControl.Devices.Classes;
+﻿using CameraControl.Devices.Classes;
 using CameraControl.Devices.TransferProtocol;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using PortableDeviceLib;
+using System.Globalization;
+using System.Net;
+using System.Text;
 
 namespace CameraControl.Devices.Others
 {
@@ -19,8 +14,8 @@ namespace CameraControl.Devices.Others
         public YiCameraProtocol Protocol { get; set; }
         public Dictionary<string, string> CurrentValues { get; set; }
 
-        private static AutoResetEvent _resetEvent = new AutoResetEvent(false);
-        private static AutoResetEvent _listingEvent = new AutoResetEvent(false);
+        private static readonly AutoResetEvent _resetEvent = new AutoResetEvent(false);
+        private static readonly AutoResetEvent _listingEvent = new AutoResetEvent(false);
         private string _lastData = "";
         private bool _timelapse_running = false;
 
@@ -28,7 +23,7 @@ namespace CameraControl.Devices.Others
 
         public override bool Init(DeviceDescriptor deviceDescriptor)
         {
-            CurrentValues = new Dictionary<string, string>();
+            CurrentValues = [];
             Capabilities.Add(CapabilityEnum.LiveView);
             Capabilities.Add(CapabilityEnum.LiveViewStream);
             Capabilities.Add(CapabilityEnum.RecordMovie);
@@ -39,7 +34,7 @@ namespace CameraControl.Devices.Others
             Manufacturer = Protocol.Manufacturer;
             IsConnected = true;
             CompressionSetting = new PropertyValue<long> { Tag = "photo_quality" };
-            
+
             Mode = new PropertyValue<long> { Tag = "capture_mode" };
             Mode.AddValues("Single", 0);
             Mode.AddValues("Burst", 1);
@@ -48,7 +43,7 @@ namespace CameraControl.Devices.Others
             Mode.ReloadValues();
 
             ExposureMeteringMode = new PropertyValue<long>() { Tag = "meter_mode" };
-            
+
             LiveViewImageZoomRatio = new PropertyValue<long>();
             LiveViewImageZoomRatio.AddValues("All", 0);
             LiveViewImageZoomRatio.Value = "All";
@@ -68,18 +63,18 @@ namespace CameraControl.Devices.Others
         {
             try
             {
-                IsoNumber = new PropertyValue<long> {Available = false};
-                FNumber = new PropertyValue<long> {Available = false};
-                ExposureCompensation = new PropertyValue<long> {Available = false};
-                FocusMode = new PropertyValue<long> {Available = false};
-                ShutterSpeed = new PropertyValue<long> {Available = false};
-                WhiteBalance = new PropertyValue<long> {Available = false};
+                IsoNumber = new PropertyValue<long> { Available = false };
+                FNumber = new PropertyValue<long> { Available = false };
+                ExposureCompensation = new PropertyValue<long> { Available = false };
+                FocusMode = new PropertyValue<long> { Available = false };
+                ShutterSpeed = new PropertyValue<long> { Available = false };
+                WhiteBalance = new PropertyValue<long> { Available = false };
 
                 Properties.Add(AddNames("photo_size", "Photo size"));
                 Properties.Add(AddNames("precise_selftime", "Capture delay"));
                 Properties.Add(AddNames("burst_capture_number", "Burst capture number"));
                 Properties.Add(AddNames("auto_low_light", "Auto low light"));
-                
+
                 AdvancedProperties.Add(AddNames("video_resolution", "Video resolution"));
                 AdvancedProperties.Add(AddNames("led_mode", "Led mode"));
                 AdvancedProperties.Add(AddNames("auto_power_off", "Auto power off"));
@@ -146,7 +141,7 @@ namespace CameraControl.Devices.Others
             _resetEvent.WaitOne(1000);
         }
 
-        private PropertyValue<long> AddNames(string keyname, string  name)
+        private PropertyValue<long> AddNames(string keyname, string name)
         {
             var res = new PropertyValue<long>
             {
@@ -185,15 +180,15 @@ namespace CameraControl.Devices.Others
                                 case "burst_complete":
                                 case "photo_taken":
                                     string filename = Path.GetFileName(((string)resp.param).Replace('/', '\\'));
-                                        PhotoCapturedEventArgs args = new PhotoCapturedEventArgs
-                                                                          {
-                                                                              WiaImageItem = null,
-                                                                              EventArgs =new PortableDeviceEventArgs(),
-                                                                              CameraDevice = this,
-                                                                              FileName = filename,
-                                                                              Handle = filename
-                                                                          };
-                                        OnPhotoCapture(this, args);
+                                    PhotoCapturedEventArgs args = new PhotoCapturedEventArgs
+                                    {
+                                        WiaImageItem = null,
+                                        EventArgs = new PortableDeviceEventArgs(),
+                                        CameraDevice = this,
+                                        FileName = filename,
+                                        Handle = filename
+                                    };
+                                    OnPhotoCapture(this, args);
                                     break;
                                 default:
                                     SetProperty((string)resp.type, (string)resp.param);
@@ -229,8 +224,10 @@ namespace CameraControl.Devices.Others
             {
                 var k = o.ToObject<Dictionary<string, string>>();
                 string v = k.First().Value;
-                var file = new DeviceObject();
-                file.FileName = k.First().Key;
+                var file = new DeviceObject
+                {
+                    FileName = k.First().Key
+                };
                 if (file.FileName.ToLower().Contains("thm"))
                     continue;
                 file.Handle = file.FileName;
@@ -298,7 +295,7 @@ namespace CameraControl.Devices.Others
         public override bool DeleteObject(DeviceObject deviceObject)
         {
             SendCommand(1283, "\\/var\\/www\\/DCIM\\/100MEDIA/");
-            SendCommand(1281, (string) deviceObject.Handle);
+            SendCommand(1281, (string)deviceObject.Handle);
             return true;
         }
 
@@ -364,13 +361,13 @@ namespace CameraControl.Devices.Others
 
         private void SetValues(string data)
         {
-            List<string> values=new List<string>();
+            List<string> values = [];
             dynamic a = JsonConvert.DeserializeObject(data);
             foreach (string o in a.options)
             {
                 values.Add(o);
             }
-            string param = (string) a.param;
+            string param = (string)a.param;
             switch (param)
             {
                 case "photo_quality":
@@ -405,7 +402,7 @@ namespace CameraControl.Devices.Others
                             }
                             property.IsEnabled = a.permission == "settable";
                             property.ReloadValues();
-                            property.Value = GetValue(param);                            
+                            property.Value = GetValue(param);
                         }
                     }
                     foreach (var property in AdvancedProperties)
@@ -430,7 +427,7 @@ namespace CameraControl.Devices.Others
 
         public override string GetLiveViewStream()
         {
-            return String.Format("rtsp://{0}/live",Protocol.Ip);
+            return String.Format("rtsp://{0}/live", Protocol.Ip);
         }
 
         public override void StartLiveView()

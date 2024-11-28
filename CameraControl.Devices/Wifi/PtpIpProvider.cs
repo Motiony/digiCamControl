@@ -1,11 +1,10 @@
-﻿using System;
-using CameraControl.Devices.Classes;
+﻿using CameraControl.Devices.Classes;
 using CameraControl.Devices.TransferProtocol;
 using CameraControl.Devices.TransferProtocol.PtpIp;
 
 namespace CameraControl.Devices.Wifi
 {
-    public class PtpIpProvider:IWifiDeviceProvider
+    public class PtpIpProvider : IWifiDeviceProvider
     {
         public string Name { get; set; }
         public string DefaultIp { get; set; }
@@ -27,7 +26,7 @@ namespace CameraControl.Devices.Wifi
 
             if (CameraDeviceManager.GetNativeDriver(protocol.Model) != null)
             {
-                DeviceDescriptor descriptor = new DeviceDescriptor {WpdId = "ptpip"};
+                DeviceDescriptor descriptor = new DeviceDescriptor { WpdId = "ptpip" };
                 var cameraDevice = (ICameraDevice)Activator.CreateInstance(CameraDeviceManager.GetNativeDriver(protocol.Model));
                 descriptor.StillImageDevice = protocol;
                 descriptor.CameraDevice = cameraDevice;

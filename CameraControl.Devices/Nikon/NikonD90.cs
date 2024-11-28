@@ -28,8 +28,6 @@
 
 #region
 
-using System;
-using System.IO;
 using CameraControl.Devices.Classes;
 using PortableDeviceLib;
 
@@ -51,8 +49,10 @@ namespace CameraControl.Devices.Nikon
 
         public override LiveViewData GetLiveViewImage()
         {
-            LiveViewData viewData = new LiveViewData();
-            viewData.HaveFocusData = true;
+            LiveViewData viewData = new LiveViewData
+            {
+                HaveFocusData = true
+            };
 
             const int headerSize = 128;
 
@@ -108,14 +108,14 @@ namespace CameraControl.Devices.Nikon
                     if (val.Data != null && val.Data.Length > 0)
                         oldval = val.Data[0];
 
-                    SetProperty(CONST_CMD_SetDevicePropValue, new[] {(byte) 4}, CONST_PROP_AFModeSelect);
+                    SetProperty(CONST_CMD_SetDevicePropValue, new[] { (byte)4 }, CONST_PROP_AFModeSelect);
 
                     ErrorCodes.GetException(CaptureInSdRam
                                                 ? ExecuteWithNoData(CONST_CMD_InitiateCaptureRecInSdram, 0xFFFFFFFF)
                                                 : ExecuteWithNoData(CONST_CMD_InitiateCapture));
 
                     if (val.Data != null && val.Data.Length > 0)
-                        SetProperty(CONST_CMD_SetDevicePropValue, new[] {oldval}, CONST_PROP_AFModeSelect);
+                        SetProperty(CONST_CMD_SetDevicePropValue, new[] { oldval }, CONST_PROP_AFModeSelect);
 
                     UnLockCamera();
                 }

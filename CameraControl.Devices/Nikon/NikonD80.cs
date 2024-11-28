@@ -28,8 +28,6 @@
 
 #region
 
-using System;
-using System.Collections.Generic;
 using CameraControl.Devices.Classes;
 
 #endregion
@@ -103,12 +101,12 @@ namespace CameraControl.Devices.Nikon
                 if (val.Data != null && val.Data.Length > 0)
                     oldval = val.Data[0];
 
-                ErrorCodes.GetException(StillImageDevice.ExecuteWriteData(CONST_CMD_SetDevicePropValue, new[] {(byte) 4},
+                ErrorCodes.GetException(StillImageDevice.ExecuteWriteData(CONST_CMD_SetDevicePropValue, new[] { (byte)4 },
                                                                           CONST_PROP_AFModeSelect));
                 ErrorCodes.GetException(StillImageDevice.ExecuteWithNoData(CONST_CMD_InitiateCapture));
                 if (val.Data != null && val.Data.Length > 0)
                     ErrorCodes.GetException(StillImageDevice.ExecuteWriteData(CONST_CMD_SetDevicePropValue,
-                                                                              new[] {oldval},
+                                                                              new[] { oldval },
                                                                               CONST_PROP_AFModeSelect));
             }
         }

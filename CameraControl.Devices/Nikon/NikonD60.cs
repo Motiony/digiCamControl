@@ -28,8 +28,6 @@
 
 #region
 
-using System;
-using System.Collections.Generic;
 using CameraControl.Devices.Classes;
 
 #endregion

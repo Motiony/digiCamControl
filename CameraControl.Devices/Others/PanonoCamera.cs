@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Threading;
-using CameraControl.Devices;
+﻿using CameraControl.Devices;
 using CameraControl.Devices.Classes;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System.Net;
 using WebSocketSharp;
 using Timer = System.Timers.Timer;
 
@@ -16,14 +12,16 @@ namespace PanonoTest
     {
         private WebSocket _ws;
         private static int request_id = 0;
-        private Timer _timer = new Timer(500);
+        private readonly Timer _timer = new Timer(500);
 
 
         public bool Init(string endpoint)
         {
-            
-            _ws = new WebSocket(endpoint);
-            _ws.WaitTime = new TimeSpan(0, 0, 4);
+
+            _ws = new WebSocket(endpoint)
+            {
+                WaitTime = new TimeSpan(0, 0, 4)
+            };
             _ws.OnMessage += Ws_OnMessage;
             _ws.OnClose += _ws_OnClose;
             _ws.OnError += _ws_OnError;
@@ -31,17 +29,17 @@ namespace PanonoTest
             LiveViewImageZoomRatio = new PropertyValue<long>();
             Auth();
             IsConnected = true;
-            IsoNumber = new PropertyValue<long> {Available = true};
-            FNumber = new PropertyValue<long> {Available = false};
-            ExposureCompensation = new PropertyValue<long> {Available = false};
-            FocusMode = new PropertyValue<long> {Available = false};
-            ShutterSpeed = new PropertyValue<long> {Available = false};
-            WhiteBalance = new PropertyValue<long> {Available = false};
+            IsoNumber = new PropertyValue<long> { Available = true };
+            FNumber = new PropertyValue<long> { Available = false };
+            ExposureCompensation = new PropertyValue<long> { Available = false };
+            FocusMode = new PropertyValue<long> { Available = false };
+            ShutterSpeed = new PropertyValue<long> { Available = false };
+            WhiteBalance = new PropertyValue<long> { Available = false };
             InitIso();
             InitMode();
             _timer.Elapsed += _timer_Elapsed;
             _timer.AutoReset = true;
-           // _timer.Start();
+            // _timer.Start();
             return true;
         }
 
@@ -61,7 +59,7 @@ namespace PanonoTest
             }
         }
 
-        private void _ws_OnError(object sender, ErrorEventArgs e)
+        private void _ws_OnError(object sender, WebSocketSharp.ErrorEventArgs e)
         {
             StaticHelper.Instance.SystemMessage = e.Message;
         }
@@ -69,7 +67,7 @@ namespace PanonoTest
         private void _ws_OnClose(object sender, CloseEventArgs e)
         {
             Close();
-            OnCameraDisconnected(this, new DisconnectCameraEventArgs {});
+            OnCameraDisconnected(this, new DisconnectCameraEventArgs { });
         }
 
         public override void Close()
@@ -104,7 +102,7 @@ namespace PanonoTest
 
         private void InitMode()
         {
-            Mode = new PropertyValue<long> {Tag = "ImageType"};
+            Mode = new PropertyValue<long> { Tag = "ImageType" };
             Mode.AddValues("Default", 0);
             Mode.AddValues("HDR", 1);
             Mode.ReloadValues();
@@ -193,9 +191,9 @@ namespace PanonoTest
                     }
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                
+
             }
         }
 
@@ -205,7 +203,7 @@ namespace PanonoTest
             Thread.Sleep(100);
             TransferProgress = 0;
             var param = o as List<object>;
-            HttpHelper.DownLoadFileByWebRequest((string) param[0], filename, this, (long) param[1]);
+            HttpHelper.DownLoadFileByWebRequest((string)param[0], filename, this, (long)param[1]);
             _timer.Start();
         }
 
@@ -241,7 +239,7 @@ namespace PanonoTest
             return CreateJson(name, "2.0", prms);
         }
 
-        private  string CreateJson(string name, string version, params object[] prms)
+        private string CreateJson(string name, string version, params object[] prms)
         {
             var param = new JArray();
             JObject json;

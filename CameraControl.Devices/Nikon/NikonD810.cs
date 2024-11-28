@@ -1,12 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Text;
-using CameraControl.Devices.Classes;
-using PortableDeviceLib;
-
-namespace CameraControl.Devices.Nikon
+﻿namespace CameraControl.Devices.Nikon
 {
     public class NikonD810 : NikonD600
     {

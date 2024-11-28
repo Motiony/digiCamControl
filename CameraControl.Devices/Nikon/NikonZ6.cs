@@ -1,11 +1,4 @@
 ﻿using CameraControl.Devices.Classes;
-using PortableDeviceLib;
-using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CameraControl.Devices.Nikon
 {
@@ -13,8 +6,8 @@ namespace CameraControl.Devices.Nikon
     {
         public const uint CONST_CMD_LiveViewZoomArea = 0xD1BD;
         public NikonZ6()
-        {        
-        _isoTable = new Dictionary<uint, string>()
+        {
+            _isoTable = new Dictionary<uint, string>()
             {
                 {0x0032, "Lo 1.0"},
                 {0x0040, "Lo 0.7"},
@@ -108,10 +101,10 @@ namespace CameraControl.Devices.Nikon
 
         protected override void InitFNumber()
         {
-            NormalFNumber = new PropertyValue<long> {IsEnabled = true, Name = "FNumber"};
+            NormalFNumber = new PropertyValue<long> { IsEnabled = true, Name = "FNumber" };
             NormalFNumber.ValueChanged += NormalFNumber_ValueChanged;
             NormalFNumber.SubType = typeof(UInt16);
-            MovieFNumber = new PropertyValue<long> {IsEnabled = true, Name = "FNumber"};
+            MovieFNumber = new PropertyValue<long> { IsEnabled = true, Name = "FNumber" };
             MovieFNumber.ValueChanged += MovieFNumber_ValueChanged;
             MovieFNumber.SubType = typeof(UInt16);
             ReInitFNumber(false);
@@ -120,21 +113,24 @@ namespace CameraControl.Devices.Nikon
         private void MovieFNumber_ValueChanged(object sender, string key, long val)
         {
             if (Mode != null && (Mode.Value == "A" || Mode.Value == "M"))
-                SetProperty(CONST_CMD_SetDevicePropValue, BitConverter.GetBytes((UInt16) val),
+                SetProperty(CONST_CMD_SetDevicePropValue, BitConverter.GetBytes((UInt16)val),
                     CONST_PROP_MovieFnumber);
         }
 
         private void NormalFNumber_ValueChanged(object sender, string key, long val)
         {
             if (Mode != null && (Mode.Value == "A" || Mode.Value == "M"))
-                SetProperty(CONST_CMD_SetDevicePropValue, BitConverter.GetBytes((UInt16) val),
+                SetProperty(CONST_CMD_SetDevicePropValue, BitConverter.GetBytes((UInt16)val),
                     CONST_PROP_Fnumber);
         }
 
         protected override void InitOther()
         {
-            LiveViewImageZoomRatio = new PropertyValue<long> { Name = "LiveViewImageZoomRatio" };
-            LiveViewImageZoomRatio.SubType = typeof(UInt16);
+            LiveViewImageZoomRatio = new PropertyValue<long>
+            {
+                Name = "LiveViewImageZoomRatio",
+                SubType = typeof(UInt16)
+            };
             LiveViewImageZoomRatio.AddValues("All", 0);
             LiveViewImageZoomRatio.AddValues("50%", 2048);
             LiveViewImageZoomRatio.AddValues("100%", 1024);

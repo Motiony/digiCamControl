@@ -28,12 +28,9 @@
 
 #region
 
-using System;
-using System.Collections.Generic;
+using CameraControl.Devices.Classes;
 using System.Runtime.InteropServices;
 using System.Text;
-using System.Threading;
-using CameraControl.Devices.Classes;
 using WIA;
 
 #endregion
@@ -42,7 +39,7 @@ namespace CameraControl.Devices.Others
 {
     public class WiaCameraDevice : BaseCameraDevice
     {
-        private Dictionary<int, string> ShutterTable = new Dictionary<int, string>
+        private readonly Dictionary<int, string> ShutterTable = new Dictionary<int, string>
                                                            {
                                                                {1, "1/6400"},
                                                                {2, "1/4000"},
@@ -100,7 +97,7 @@ namespace CameraControl.Devices.Others
                                                                {-1, "Bulb"},
                                                            };
 
-        private Dictionary<int, string> ExposureModeTable = new Dictionary<int, string>()
+        private readonly Dictionary<int, string> ExposureModeTable = new Dictionary<int, string>()
                                                                 {
                                                                     {1, "M"},
                                                                     {2, "P"},
@@ -117,7 +114,7 @@ namespace CameraControl.Devices.Others
                                                                     {0x8019, "[EffectMode] EFFECTS"},
                                                                 };
 
-        private Dictionary<int, string> WbTable = new Dictionary<int, string>()
+        private readonly Dictionary<int, string> WbTable = new Dictionary<int, string>()
                                                       {
                                                           {2, "Auto"},
                                                           {4, "Daylight"},
@@ -130,7 +127,7 @@ namespace CameraControl.Devices.Others
                                                           {32787, "Custom"}
                                                       };
 
-        private Dictionary<int, string> CSTable = new Dictionary<int, string>()
+        private readonly Dictionary<int, string> CSTable = new Dictionary<int, string>()
                                                       {
                                                           {0, "JPEG (BASIC)"},
                                                           {1, "JPEG (NORMAL)"},
@@ -142,14 +139,14 @@ namespace CameraControl.Devices.Others
                                                           {7, "RAW + JPEG (FINE)"}
                                                       };
 
-        private Dictionary<int, string> EMMTable = new Dictionary<int, string>
+        private readonly Dictionary<int, string> EMMTable = new Dictionary<int, string>
                                                        {
                                                            {2, "Center-weighted metering"},
                                                            {3, "Multi-pattern metering"},
                                                            {4, "Spot metering"}
                                                        };
 
-        private Dictionary<uint, string> FMTable = new Dictionary<uint, string>()
+        private readonly Dictionary<uint, string> FMTable = new Dictionary<uint, string>()
                                                        {
                                                            {1, "[M] Manual focus"},
                                                            {0x8010, "[S] Single AF servo"},
@@ -226,12 +223,12 @@ namespace CameraControl.Devices.Others
                     {
                         foreach (var subTypeValue in apertureProperty.SubTypeValues)
                         {
-                            double d = (int) subTypeValue;
-                            string s = (d/100).ToString("0.0");
-                            FNumber.AddValues(s, (int) d);
+                            double d = (int)subTypeValue;
+                            string s = (d / 100).ToString("0.0");
+                            FNumber.AddValues(s, (int)d);
                             FNumber.ReloadValues();
-                            if ((int) subTypeValue == (int) apertureProperty.get_Value())
-                                FNumber.SetValue((int) d);
+                            if ((int)subTypeValue == (int)apertureProperty.get_Value())
+                                FNumber.SetValue((int)d);
                         }
                     }
                 }
@@ -247,10 +244,10 @@ namespace CameraControl.Devices.Others
                     {
                         foreach (var subTypeValue in isoProperty.SubTypeValues)
                         {
-                            IsoNumber.AddValues(subTypeValue.ToString(), (int) subTypeValue);
+                            IsoNumber.AddValues(subTypeValue.ToString(), (int)subTypeValue);
                             IsoNumber.ReloadValues();
-                            if ((int) subTypeValue == (int) isoProperty.get_Value())
-                                IsoNumber.SetValue((int) subTypeValue);
+                            if ((int)subTypeValue == (int)isoProperty.get_Value())
+                                IsoNumber.SetValue((int)subTypeValue);
                         }
                     }
                 }
@@ -266,8 +263,8 @@ namespace CameraControl.Devices.Others
                     {
                         foreach (int subTypeValue in shutterProperty.SubTypeValues)
                         {
-                            if (ShutterTable.ContainsKey((int) subTypeValue))
-                                ShutterSpeed.AddValues(ShutterTable[(int) subTypeValue], (int) subTypeValue);
+                            if (ShutterTable.ContainsKey(subTypeValue))
+                                ShutterSpeed.AddValues(ShutterTable[subTypeValue], subTypeValue);
                         }
                         ShutterSpeed.ReloadValues();
                         ShutterSpeed.SetValue(shutterProperty.get_Value());
@@ -285,8 +282,8 @@ namespace CameraControl.Devices.Others
                     {
                         foreach (var subTypeValue in wbProperty.SubTypeValues)
                         {
-                            if (WbTable.ContainsKey((int) subTypeValue))
-                                WhiteBalance.AddValues(WbTable[(int) subTypeValue], (int) subTypeValue);
+                            if (WbTable.ContainsKey((int)subTypeValue))
+                                WhiteBalance.AddValues(WbTable[(int)subTypeValue], (int)subTypeValue);
                         }
                         WhiteBalance.ReloadValues();
                         WhiteBalance.SetValue(wbProperty.get_Value());
@@ -304,8 +301,8 @@ namespace CameraControl.Devices.Others
                     {
                         foreach (var subTypeValue in modeProperty.SubTypeValues)
                         {
-                            if (ExposureModeTable.ContainsKey((int) subTypeValue))
-                                Mode.AddValues(ExposureModeTable[(int) subTypeValue], Convert.ToUInt32(subTypeValue));
+                            if (ExposureModeTable.ContainsKey((int)subTypeValue))
+                                Mode.AddValues(ExposureModeTable[(int)subTypeValue], Convert.ToUInt32(subTypeValue));
                         }
                         Mode.ReloadValues();
                         Mode.SetValue(Convert.ToUInt32(modeProperty.get_Value()));
@@ -324,11 +321,11 @@ namespace CameraControl.Devices.Others
                     {
                         foreach (var subTypeValue in ecProperty.SubTypeValues)
                         {
-                            decimal d = (int) subTypeValue;
-                            string s = decimal.Round(d/1000, 1).ToString();
+                            decimal d = (int)subTypeValue;
+                            string s = decimal.Round(d / 1000, 1).ToString();
                             if (d > 0)
                                 s = "+" + s;
-                            ExposureCompensation.AddValues(s, (int) subTypeValue);
+                            ExposureCompensation.AddValues(s, (int)subTypeValue);
                         }
                         ExposureCompensation.ReloadValues();
                         ExposureCompensation.SetValue(ecProperty.get_Value());
@@ -346,8 +343,8 @@ namespace CameraControl.Devices.Others
                     {
                         foreach (var subTypeValue in csProperty.SubTypeValues)
                         {
-                            if (CSTable.ContainsKey((int) subTypeValue))
-                                CompressionSetting.AddValues(CSTable[(int) subTypeValue], (int) subTypeValue);
+                            if (CSTable.ContainsKey((int)subTypeValue))
+                                CompressionSetting.AddValues(CSTable[(int)subTypeValue], (int)subTypeValue);
                         }
                         CompressionSetting.ReloadValues();
                         CompressionSetting.SetValue(csProperty.get_Value());
@@ -365,8 +362,8 @@ namespace CameraControl.Devices.Others
                     {
                         foreach (var subTypeValue in emmProperty.SubTypeValues)
                         {
-                            if (EMMTable.ContainsKey((int) subTypeValue))
-                                ExposureMeteringMode.AddValues(EMMTable[(int) subTypeValue], (int) subTypeValue);
+                            if (EMMTable.ContainsKey((int)subTypeValue))
+                                ExposureMeteringMode.AddValues(EMMTable[(int)subTypeValue], (int)subTypeValue);
                         }
                         ExposureMeteringMode.ReloadValues();
                         ExposureMeteringMode.SetValue(emmProperty.get_Value());
@@ -389,7 +386,7 @@ namespace CameraControl.Devices.Others
                                 FocusMode.AddValues(FMTable[subval], subval);
                         }
                         FocusMode.ReloadValues();
-                        FocusMode.SetValue(Convert.ToUInt16((int) fmProperty.get_Value()));
+                        FocusMode.SetValue(Convert.ToUInt16((int)fmProperty.get_Value()));
                     }
                 }
                 catch (COMException)
@@ -430,10 +427,10 @@ namespace CameraControl.Devices.Others
                 }
                 catch (COMException e)
                 {
-                    if ((uint) e.ErrorCode == ErrorCodes.WIA_ERROR_BUSY && retries_left > 0)
+                    if ((uint)e.ErrorCode == ErrorCodes.WIA_ERROR_BUSY && retries_left > 0)
                     {
-                        int retry_in_secs = 2*(7 - retries_left);
-                        Thread.Sleep(1000*retry_in_secs);
+                        int retry_in_secs = 2 * (7 - retries_left);
+                        Thread.Sleep(1000 * retry_in_secs);
                         Log.Debug("Connection to wia failed, Retrying to connect in " + retry_in_secs + " seconds");
                         ConnectToWiaDevice(deviceDescriptor, retries_left - 1);
                     }
@@ -449,13 +446,13 @@ namespace CameraControl.Devices.Others
         private void DeviceManager_OnEvent(string eventId, string deviceId, string itemId)
         {
             Item tem = Device.GetItem(itemId);
-            ImageFile imageFile = (ImageFile) tem.Transfer("{B96B3CAE-0728-11D3-9D7B-0000F81EF32E}");
+            ImageFile imageFile = (ImageFile)tem.Transfer("{B96B3CAE-0728-11D3-9D7B-0000F81EF32E}");
             PhotoCapturedEventArgs args = new PhotoCapturedEventArgs
             {
                 EventArgs = imageFile,
                 CameraDevice = this,
                 FileName = "00000." + imageFile.FileExtension,
-                Handle = new object[] {imageFile, itemId}
+                Handle = new object[] { imageFile, itemId }
             };
             OnPhotoCapture(this, args);
             OnCaptureCompleted(this, new EventArgs());
@@ -479,8 +476,10 @@ namespace CameraControl.Devices.Others
             ExposureCompensation.ValueChanged += ExposureCompensation_ValueChanged;
             ExposureMeteringMode = new PropertyValue<long>();
             ExposureMeteringMode.ValueChanged += ExposureMeteringMode_ValueChanged;
-            FocusMode = new PropertyValue<long>();
-            FocusMode.IsEnabled = false;
+            FocusMode = new PropertyValue<long>
+            {
+                IsEnabled = false
+            };
         }
 
         private void ExposureMeteringMode_ValueChanged(object sender, string key, long val)
@@ -704,7 +703,7 @@ namespace CameraControl.Devices.Others
 
         public override bool DeleteObject(DeviceObject deviceObject)
         {
-            string id = (string)((object[]) (deviceObject.Handle))[1];
+            string id = (string)((object[])(deviceObject.Handle))[1];
             for (int j = 1; j <= Device.Items.Count; j++)
             {
                 if (Device.Items[j].ItemID == id)

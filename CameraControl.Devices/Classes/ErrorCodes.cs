@@ -28,8 +28,8 @@
 
 #region
 
-using System.Runtime.InteropServices;
 using Canon.Eos.Framework.Internal.SDK;
+using System.Runtime.InteropServices;
 
 #endregion
 
@@ -71,7 +71,7 @@ namespace CameraControl.Devices.Classes
 
         public static void GetException(int code)
         {
-            GetException((uint) code);
+            GetException((uint)code);
         }
 
         public static void GetCanonException(uint code)
@@ -81,7 +81,7 @@ namespace CameraControl.Devices.Classes
                 switch (code)
                 {
                     default:
-                        throw new DeviceException("Canon error code: " + code.ToString("X"), code);  
+                        throw new DeviceException("Canon error code: " + code.ToString("X"), code);
                 }
             }
         }
@@ -132,42 +132,42 @@ namespace CameraControl.Devices.Classes
 
         public static void GetException(COMException exception)
         {
-            switch ((uint) exception.ErrorCode)
+            switch ((uint)exception.ErrorCode)
             {
                 case WIA_ERROR_BUSY:
                     throw new DeviceException("Device is busy. Error code :WIA_ERROR_BUSY", exception,
-                                              (uint) exception.ErrorCode);
+                                              (uint)exception.ErrorCode);
                 case WIA_ERROR_DEVICE_COMMUNICATION:
                     throw new DeviceException("Device communication error. Error code :WIA_ERROR_DEVICE_COMMUNICATION",
-                                              exception, (uint) exception.ErrorCode);
+                                              exception, (uint)exception.ErrorCode);
                 case WIA_ERROR_DEVICE_LOCKED:
                     throw new DeviceException("Device is locked. Error code :WIA_ERROR_DEVICE_LOCKED", exception,
-                                              (uint) exception.ErrorCode);
+                                              (uint)exception.ErrorCode);
                 case WIA_ERROR_EXCEPTION_IN_DRIVER:
                     throw new DeviceException("Exception in driver. Error code :WIA_ERROR_EXCEPTION_IN_DRIVER",
-                                              exception, (uint) exception.ErrorCode);
+                                              exception, (uint)exception.ErrorCode);
                 case WIA_ERROR_GENERAL_ERROR:
                     throw new DeviceException("General error. Error code :WIA_ERROR_GENERAL_ERROR", exception,
-                                              (uint) exception.ErrorCode);
+                                              (uint)exception.ErrorCode);
                 case WIA_ERROR_INCORRECT_HARDWARE_SETTING:
                     throw new DeviceException(
                         "Incorrect hardware error. Error code :WIA_ERROR_INCORRECT_HARDWARE_SETTING", exception,
-                        (uint) exception.ErrorCode);
+                        (uint)exception.ErrorCode);
                 case WIA_ERROR_INVALID_COMMAND:
                     throw new DeviceException("Invalid command. Error code :WIA_ERROR_INVALID_COMMAND", exception,
-                                              (uint) exception.ErrorCode);
+                                              (uint)exception.ErrorCode);
                 case WIA_ERROR_INVALID_DRIVER_RESPONSE:
                     throw new DeviceException("Invalid driver response. Error code :WIA_ERROR_INVALID_DRIVER_RESPONSE",
-                                              exception, (uint) exception.ErrorCode);
+                                              exception, (uint)exception.ErrorCode);
                 case WIA_ERROR_OFFLINE:
                     throw new DeviceException("Device is offline. Error code :WIA_ERROR_OFFLINE", exception,
-                                              WIA_ERROR_OFFLINE, (uint) exception.ErrorCode);
+                                              WIA_ERROR_OFFLINE, (uint)exception.ErrorCode);
                 case WIA_ERROR_UNABLE_TO_FOCUS:
                     throw new DeviceException("Unable to focus. Error code :WIA_ERROR_UNABLE_TO_FOCUS", exception,
-                                              WIA_ERROR_UNABLE_TO_FOCUS, (uint) exception.ErrorCode);
+                                              WIA_ERROR_UNABLE_TO_FOCUS, (uint)exception.ErrorCode);
                 default:
-                    throw new DeviceException("Unknown error. Error code:" + (uint) exception.ErrorCode, exception,
-                                              (uint) exception.ErrorCode);
+                    throw new DeviceException("Unknown error. Error code:" + (uint)exception.ErrorCode, exception,
+                                              (uint)exception.ErrorCode);
             }
         }
     }

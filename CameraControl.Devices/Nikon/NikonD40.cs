@@ -28,10 +28,8 @@
 
 #region
 
-using System;
-using System.Runtime.InteropServices;
-using System.Threading;
 using CameraControl.Devices.Classes;
+using System.Runtime.InteropServices;
 
 #endregion
 

@@ -1,26 +1,20 @@
-﻿using System;
-using System.Drawing;
-using System.Drawing.Imaging;
-using System.IO;
-using System.Linq;
-using System.Threading;
-using Accord.Video;
+﻿using Accord.Video;
 using Accord.Video.DirectShow;
 using CameraControl.Devices.Classes;
 
 namespace CameraControl.Devices.Others
 {
-    public class WebCameraDevice: BaseCameraDevice
+    public class WebCameraDevice : BaseCameraDevice
     {
         private VideoCaptureDevice _captureDevice;
 
-        private LiveViewData _liveViewData = new LiveViewData();
+        private readonly LiveViewData _liveViewData = new LiveViewData();
 
         private volatile bool _operationInProgress;
-        private Object _lock = new Object();
+        private readonly Object _lock = new Object();
         private volatile bool _processLiveView = false;
 
-        
+
         public WebCameraDevice()
         {
             Capabilities.Add(CapabilityEnum.LiveView);
@@ -44,11 +38,11 @@ namespace CameraControl.Devices.Others
             WhiteBalance = new PropertyValue<long> { Available = false };
             Mode = new PropertyValue<long> { Available = false };
             ExposureMeteringMode = new PropertyValue<long> { Available = false };
-            CompressionSetting =new PropertyValue<long>();
+            CompressionSetting = new PropertyValue<long>();
             VideoCapabilities[] capabilities = _captureDevice.VideoCapabilities;
             for (int i = 0; i < capabilities.Length; i++)
             {
-                CompressionSetting.AddValues(capabilities[i].ToString(),i);
+                CompressionSetting.AddValues(capabilities[i].ToString(), i);
             }
             CompressionSetting.ReloadValues();
             StartLiveView();
@@ -81,11 +75,12 @@ namespace CameraControl.Devices.Others
             try
             {
                 _operationInProgress = true;
-                Image img = (Bitmap)eventargs.Frame.Clone();
-                MemoryStream ms = new MemoryStream();
-                img.Save(ms, ImageFormat.Jpeg);
-                ms.Seek(0, SeekOrigin.Begin);
-                _liveViewData.ImageData = ms.ToArray();
+                //TODO
+                //Image img = (Bitmap)eventargs.Frame.Clone();
+                //MemoryStream ms = new MemoryStream();
+                //img.Save(ms, ImageFormat.Jpeg);
+                //ms.Seek(0, SeekOrigin.Begin);
+                //_liveViewData.ImageData = ms.ToArray();
             }
             catch (Exception ex)
             {
@@ -104,7 +99,7 @@ namespace CameraControl.Devices.Others
             CapturePhoto();
         }
 
-        public override  void CapturePhoto()
+        public override void CapturePhoto()
         {
             StartLiveView();
 
@@ -181,13 +176,14 @@ namespace CameraControl.Devices.Others
         {
             try
             {
-                System.Drawing.Image img = (Bitmap)eventargs.Frame.Clone();
-                using (MemoryStream ms = new MemoryStream())
-                {
-                    img.Save(ms, ImageFormat.Jpeg);
-                    ms.Seek(0, SeekOrigin.Begin);
-                    PhotoCaptureEvent(ms.ToArray());
-                }
+                //TODO
+                //System.Drawing.Image img = (Bitmap)eventargs.Frame.Clone();
+                //using (MemoryStream ms = new MemoryStream())
+                //{
+                //    img.Save(ms, ImageFormat.Jpeg);
+                //    ms.Seek(0, SeekOrigin.Begin);
+                //    PhotoCaptureEvent(ms.ToArray());
+                //}
             }
             catch (Exception ex)
             {
@@ -198,7 +194,7 @@ namespace CameraControl.Devices.Others
         public override void Close()
         {
             if (_captureDevice != null)
-           {
+            {
                 _captureDevice.SignalToStop();
                 _captureDevice.SnapshotFrame -= _localWebCam_SnapshotFrame;
                 _captureDevice.NewFrame -= _localWebCam_NewFrame;

@@ -30,7 +30,6 @@
 
 using CameraControl.Devices.TransferProtocol;
 using Canon.Eos.Framework;
-using PortableDeviceLib;
 using WIA;
 
 #endregion

@@ -1,25 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.IO;
-using System.Linq;
-using System.Net;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Windows;
-using CameraControl.Devices;
-using CameraControl.Devices.Classes;
+﻿using CameraControl.Devices.Classes;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System.Globalization;
+using System.Net;
+using System.Text;
 
 namespace CameraControl.Devices.Others
 {
     public class OscCamera : BaseCameraDevice
     {
-        private string ExecuteEndPoint = "/osc/commands/execute";
-        private string InfoEndPoint = "/osc/info";
-        private string StatusEndPoint = "/osc/commands/status";
+        private readonly string ExecuteEndPoint = "/osc/commands/execute";
+        private readonly string InfoEndPoint = "/osc/info";
+        private readonly string StatusEndPoint = "/osc/commands/status";
 
 
         public string Address { get; set; }
@@ -30,13 +22,13 @@ namespace CameraControl.Devices.Others
 
             LiveViewImageZoomRatio = new PropertyValue<long>();
             IsConnected = true;
-            IsoNumber = new PropertyValue<long> {Available = true};
-            FNumber = new PropertyValue<long> {Available = false};
-            ExposureCompensation = new PropertyValue<long> {Available = true};
-            FocusMode = new PropertyValue<long> {Available = false};
-            ShutterSpeed = new PropertyValue<long> {Available = false};
-            WhiteBalance = new PropertyValue<long> {Available = false};
-            Mode = new PropertyValue<long>() {Available = true};
+            IsoNumber = new PropertyValue<long> { Available = true };
+            FNumber = new PropertyValue<long> { Available = false };
+            ExposureCompensation = new PropertyValue<long> { Available = true };
+            FocusMode = new PropertyValue<long> { Available = false };
+            ShutterSpeed = new PropertyValue<long> { Available = false };
+            WhiteBalance = new PropertyValue<long> { Available = false };
+            Mode = new PropertyValue<long>() { Available = true };
             SessionId = null;
             Address = address;
             GetInfo();
@@ -52,10 +44,10 @@ namespace CameraControl.Devices.Others
         {
             try
             {
-                IsoNumber = new PropertyValue<long> { Available = true, IsEnabled = true};
+                IsoNumber = new PropertyValue<long> { Available = true, IsEnabled = true };
                 string property = "iso";
                 var response = GetProperty(property);
-//                response =
+                //                response =
                 //"{\"name\":\"camera.getOptions\",\"state\":\"done\",\"results\":{\"options\":{\"iso\":100,\"isoSupport\":[100,125,160,200,250,320,400,500,640,800,1000,1250,1600]}}}";
                 var json = Initialize(response);
                 var val = json["results"]["options"][property].Value<string>();
@@ -89,8 +81,8 @@ namespace CameraControl.Devices.Others
             {
                 string property = "exposureCompensation";
                 var response = GetProperty(property);
-//                response =
-//                    "{\"name\":\"camera.getOptions\",\"state\":\"done\",\"results\":{\"options\":{\"exposureCompensation\":0.0,\"exposureCompensationSupport\":[-2.0,-1.7,-1.3,-1.0,-0.7,-0.3,0.0,0.3,0.7,1.0,1.3,1.7,2.0]}}}";
+                //                response =
+                //                    "{\"name\":\"camera.getOptions\",\"state\":\"done\",\"results\":{\"options\":{\"exposureCompensation\":0.0,\"exposureCompensationSupport\":[-2.0,-1.7,-1.3,-1.0,-0.7,-0.3,0.0,0.3,0.7,1.0,1.3,1.7,2.0]}}}";
                 var json = Initialize(response);
                 var val = json["results"]["options"][property].Value<string>();
                 var vals = json["results"]["options"][property + "Support"].Values<string>();
@@ -100,7 +92,7 @@ namespace CameraControl.Devices.Others
                 }
                 ExposureCompensation.Value = val;
                 ExposureCompensation.ReloadValues();
-                ExposureCompensation.ValueChanged += (o, s, i) => SetProperty(property, double.Parse(s,CultureInfo.InvariantCulture));
+                ExposureCompensation.ValueChanged += (o, s, i) => SetProperty(property, double.Parse(s, CultureInfo.InvariantCulture));
             }
             catch (Exception ex)
             {
@@ -119,9 +111,9 @@ namespace CameraControl.Devices.Others
                 var json = Initialize(response);
                 var val = json["results"]["options"][property].Value<uint>();
                 //var vals = json["results"]["options"][property + "Support"].Values<string>();
-               // Mode.AddValues("Manual program", 1);
+                // Mode.AddValues("Manual program", 1);
                 Mode.AddValues("Auto", 2);
-               // Mode.AddValues("Shutter priority program", 4);
+                // Mode.AddValues("Shutter priority program", 4);
                 Mode.AddValues("ISO priority program", 9);
 
                 Mode.ReloadValues();
@@ -130,7 +122,7 @@ namespace CameraControl.Devices.Others
                     SetProperty(property, i);
                     InitIso();
                 };
-                Mode.SetValue(val); 
+                Mode.SetValue(val);
             }
             catch (Exception ex)
             {
@@ -142,9 +134,11 @@ namespace CameraControl.Devices.Others
 
         private string GetProperty(string name)
         {
-            var param = new JArray();
-            param.Add(name);
-            param.Add(name + "Support");
+            var param = new JArray
+            {
+                name,
+                name + "Support"
+            };
             var s = CreateJson("camera.getOptions", new JProperty("optionNames", param));
             return GetExecute(s);
         }
@@ -153,17 +147,19 @@ namespace CameraControl.Devices.Others
         {
             try
             {
-                var p = new JObject();
-                p.Add(new JProperty(name, val));
+                var p = new JObject
+                {
+                    new JProperty(name, val)
+                };
                 var s = CreateJson("camera.setOptions", new JProperty("options", p));
-              //  Log.Debug(s);
+                //  Log.Debug(s);
                 var res = GetExecute(s);
                 //Log.Debug(res);
                 Initialize(res);
             }
             catch (Exception ex)
             {
-                Log.Error("Unable to set property " + name+" "+val.ToString(), ex);
+                Log.Error("Unable to set property " + name + " " + val.ToString(), ex);
             }
         }
 
@@ -214,7 +210,7 @@ namespace CameraControl.Devices.Others
 
         public override void TransferFile(object o, string filename)
         {
-            string url = ((string) o);
+            string url = ((string)o);
             if (!url.StartsWith("http"))
             {
                 url = Address + "/" + url;
@@ -228,7 +224,7 @@ namespace CameraControl.Devices.Others
             try
             {
                 string url = ((string)deviceObject.Handle);
-                var array = new JArray {url};
+                var array = new JArray { url };
                 var s = CreateJson("camera.delete", new JProperty("fileUrls", array));
                 GetExecute(s);
             }
@@ -287,12 +283,12 @@ namespace CameraControl.Devices.Others
             return Get(StatusEndPoint, new JObject(new JProperty("id", id)).ToString(Formatting.None));
         }
 
-        public string GetExecute( string postData = null)
+        public string GetExecute(string postData = null)
         {
             return Get(ExecuteEndPoint, postData);
         }
 
-        public string Get(string command, string postData=null)
+        public string Get(string command, string postData = null)
         {
             try
             {

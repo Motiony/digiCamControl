@@ -28,7 +28,6 @@
 
 #region
 
-using System.IO;
 using CameraControl.Devices.Classes;
 using PortableDeviceLib;
 
@@ -56,10 +55,10 @@ namespace CameraControl.Devices.Nikon
         public override void StartLiveView()
         {
             // set record media to SDRAM
-            SetProperty(CONST_CMD_SetDevicePropValue, new[] {(byte) 1}, CONST_PROP_RecordingMedia );
+            SetProperty(CONST_CMD_SetDevicePropValue, new[] { (byte)1 }, CONST_PROP_RecordingMedia);
             DeviceReady();
             // set to Tripod shooting mode
-            SetProperty(CONST_CMD_SetDevicePropValue, new[] {(byte) 1}, CONST_PROP_LiveViewMode);
+            SetProperty(CONST_CMD_SetDevicePropValue, new[] { (byte)1 }, CONST_PROP_LiveViewMode);
             DeviceReady();
             base.StartLiveView();
         }
@@ -68,7 +67,7 @@ namespace CameraControl.Devices.Nikon
         {
             base.StopLiveView();
             DeviceReady();
-            SetProperty(CONST_CMD_SetDevicePropValue, new[] {(byte) 0}, CONST_PROP_RecordingMedia);
+            SetProperty(CONST_CMD_SetDevicePropValue, new[] { (byte)0 }, CONST_PROP_RecordingMedia);
             DeviceReady();
         }
 
@@ -105,8 +104,10 @@ namespace CameraControl.Devices.Nikon
 
         public override LiveViewData GetLiveViewImage()
         {
-            LiveViewData viewData = new LiveViewData();
-            viewData.HaveFocusData = true;
+            LiveViewData viewData = new LiveViewData
+            {
+                HaveFocusData = true
+            };
 
             const int headerSize = 64;
 
@@ -124,8 +125,8 @@ namespace CameraControl.Devices.Nikon
             int cbBytesRead = result.Data.Length;
             GetAdditionalLiveViewData(viewData, result.Data);
 
-            MemoryStream copy = new MemoryStream((int) cbBytesRead - headerSize);
-            copy.Write(result.Data, headerSize, (int)cbBytesRead - headerSize);
+            MemoryStream copy = new MemoryStream(cbBytesRead - headerSize);
+            copy.Write(result.Data, headerSize, cbBytesRead - headerSize);
             copy.Close();
             viewData.ImageData = copy.GetBuffer();
 

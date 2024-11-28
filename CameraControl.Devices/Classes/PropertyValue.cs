@@ -28,13 +28,9 @@
 
 #region
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using PortableDeviceLib;
-
 #endregion
+
+using PortableDeviceLib;
 
 namespace CameraControl.Devices.Classes
 {
@@ -44,8 +40,8 @@ namespace CameraControl.Devices.Classes
 
         public event ValueChangedEventHandler ValueChanged;
 
-        private Dictionary<string, T> _valuesDictionary;
-        private Dictionary<string, string> _replaceValues;
+        private readonly Dictionary<string, T> _valuesDictionary;
+        private readonly Dictionary<string, string> _replaceValues;
         private AsyncObservableCollection<T> _numericValues = new AsyncObservableCollection<T>();
         private AsyncObservableCollection<string> _values = new AsyncObservableCollection<string>();
         private bool _notifyValuChange = true;
@@ -203,8 +199,10 @@ namespace CameraControl.Devices.Classes
 
         public void OnValueChanged(object sender, string key, T val)
         {
-            Thread thread = new Thread(OnValueChangedThread);
-            thread.Name = "SetProperty thread " + Name;
+            Thread thread = new Thread(OnValueChangedThread)
+            {
+                Name = "SetProperty thread " + Name
+            };
             thread.Start(new object[] { sender, key, val });
             thread.Join(200);
         }

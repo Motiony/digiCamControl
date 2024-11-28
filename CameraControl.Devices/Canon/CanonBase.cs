@@ -28,14 +28,11 @@
 
 #region
 
-using System;
-using System.Collections.Generic;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading;
 using CameraControl.Devices.Classes;
 using PortableDeviceLib;
 using PortableDeviceLib.Model;
+using System.Runtime.InteropServices;
+using System.Text;
 
 #endregion
 
@@ -171,9 +168,9 @@ namespace CameraControl.Devices.Canon
                     {
                         try
                         {
-                            uint eventCode = BitConverter.ToUInt16(response.Data, 6*i + 2);
-                            ushort eventParam = BitConverter.ToUInt16(response.Data, 6*i + 4);
-                            int longeventParam = BitConverter.ToInt32(response.Data, 6*i + 4);
+                            uint eventCode = BitConverter.ToUInt16(response.Data, 6 * i + 2);
+                            ushort eventParam = BitConverter.ToUInt16(response.Data, 6 * i + 4);
+                            int longeventParam = BitConverter.ToInt32(response.Data, 6 * i + 4);
                             switch (eventCode)
                             {
                                 case CONST_Event_CANON_EOS_PropValueChanged:
@@ -188,11 +185,11 @@ namespace CameraControl.Devices.Canon
                                         {
                                             MTPDataResponse objectdata =
                                                 ExecuteReadDataEx(CONST_CMD_CANON_EOS_GetObjectInfo,
-                                                                  (uint) longeventParam);
+                                                                  (uint)longeventParam);
                                             string filename = "DSC_0000.JPG";
                                             if (objectdata.Data != null)
                                             {
-                                                filename = Encoding.Unicode.GetString(objectdata.Data, 53, 12*2);
+                                                filename = Encoding.Unicode.GetString(objectdata.Data, 53, 12 * 2);
                                                 if (filename.Contains("\0"))
                                                     filename = filename.Split('\0')[0];
                                             }
@@ -202,23 +199,23 @@ namespace CameraControl.Devices.Canon
                                             }
                                             Log.Debug("File transfer " + filename);
                                             PhotoCapturedEventArgs args = new PhotoCapturedEventArgs
-                                                                              {
-                                                                                  WiaImageItem = null,
-                                                                                  EventArgs =
+                                            {
+                                                WiaImageItem = null,
+                                                EventArgs =
                                                                                       new PortableDeviceEventArgs(new PortableDeviceEventType
                                                                                                                       ()
-                                                                                                                      {
-                                                                                                                          ObjectHandle
+                                                                                      {
+                                                                                          ObjectHandle
                                                                                                                               =
                                                                                                                               (
                                                                                                                               uint
                                                                                                                               )
                                                                                                                               longeventParam
-                                                                                                                      }),
-                                                                                  CameraDevice = this,
-                                                                                  FileName = filename,
-                                                                                  Handle = (uint) longeventParam
-                                                                              };
+                                                                                      }),
+                                                CameraDevice = this,
+                                                FileName = filename,
+                                                Handle = (uint)longeventParam
+                                            };
                                             OnPhotoCapture(this, args);
                                         }
                                         catch (Exception exception)
@@ -227,14 +224,14 @@ namespace CameraControl.Devices.Canon
                                         }
                                     }
                                     break;
-                                    //case CONST_Event_CaptureComplete:
-                                    //case CONST_Event_CaptureCompleteRecInSdram:
-                                    //    {
-                                    //        OnCaptureCompleted(this, new EventArgs());
-                                    //    }
-                                    //    break;
-                                    //case CONST_Event_ObsoleteEvent:
-                                    //    break;
+                                //case CONST_Event_CaptureComplete:
+                                //case CONST_Event_CaptureCompleteRecInSdram:
+                                //    {
+                                //        OnCaptureCompleted(this, new EventArgs());
+                                //    }
+                                //    break;
+                                //case CONST_Event_ObsoleteEvent:
+                                //    break;
                                 default:
                                     //Console.WriteLine("Unknown event code " + eventCode.ToString("X"));
                                     Log.Debug("Unknown event code :" + eventCode.ToString("X") + "|" +
@@ -280,8 +277,10 @@ namespace CameraControl.Devices.Canon
 
         private void InitShutterSpeed()
         {
-            ShutterSpeed = new PropertyValue<long>();
-            ShutterSpeed.Name = "ShutterSpeed";
+            ShutterSpeed = new PropertyValue<long>
+            {
+                Name = "ShutterSpeed"
+            };
             ShutterSpeed.ValueChanged += ShutterSpeed_ValueChanged;
             ReInitShutterSpeed();
         }
@@ -320,7 +319,7 @@ namespace CameraControl.Devices.Canon
         {
             SetProperty(CONST_CMD_CANON_EOS_SetDevicePropValueEx, BitConverter.GetBytes(val),
                         CONST_PROP_EOS_ShutterSpeed);
-            SetEOSProperty(CONST_PROP_EOS_ShutterSpeed, (uint) val);
+            SetEOSProperty(CONST_PROP_EOS_ShutterSpeed, (uint)val);
         }
 
         public override void CapturePhoto()
@@ -355,7 +354,7 @@ namespace CameraControl.Devices.Canon
                 StillImageDevice.IsConnected = false;
                 IsConnected = false;
 
-                OnCameraDisconnected(this, new DisconnectCameraEventArgs {StillImageDevice = StillImageDevice});
+                OnCameraDisconnected(this, new DisconnectCameraEventArgs { StillImageDevice = StillImageDevice });
             }
             else
             {
@@ -410,14 +409,14 @@ namespace CameraControl.Devices.Canon
         {
             SetProperty(CONST_CMD_CANON_EOS_SetDevicePropValueEx, BitConverter.GetBytes(2),
                         CONST_PROP_EOS_LiveView);
-            SetEOSProperty(CONST_PROP_EOS_LiveView, (uint) 2);
+            SetEOSProperty(CONST_PROP_EOS_LiveView, 2);
         }
 
         public override void StopLiveView()
         {
             SetProperty(CONST_CMD_CANON_EOS_SetDevicePropValueEx, BitConverter.GetBytes(0),
                         CONST_PROP_EOS_LiveView);
-            SetEOSProperty(CONST_PROP_EOS_LiveView, (uint) 0);
+            SetEOSProperty(CONST_PROP_EOS_LiveView, 0);
         }
 
 
@@ -437,8 +436,8 @@ namespace CameraControl.Devices.Canon
                 try
                 {
                     retry = false;
-                    uint resp = ExecuteWithNoData(CONST_CMD_CANON_EOS_SetDevicePropValueEx, 0x0000000C, (int) prop,
-                                                  (int) val);
+                    uint resp = ExecuteWithNoData(CONST_CMD_CANON_EOS_SetDevicePropValueEx, 0x0000000C, (int)prop,
+                                                  (int)val);
 
                     if (resp != 0 || resp != ErrorCodes.MTP_OK)
                     {

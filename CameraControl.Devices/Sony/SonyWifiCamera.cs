@@ -1,26 +1,19 @@
-﻿using Newtonsoft.Json;
+﻿using CameraControl.Devices.Classes;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
+using PortableDeviceLib;
 using System.Net;
+using System.Net.Http.Headers;
 using System.Runtime.InteropServices;
 using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Timers;
-using CameraControl.Devices.Classes;
-using PortableDeviceLib;
 using Timer = System.Timers.Timer;
 
 namespace CameraControl.Devices.Sony
 {
     public class SonyWifiCamera : BaseCameraDevice
     {
-        private LiveViewData _liveViewData = new LiveViewData();
+        private readonly LiveViewData _liveViewData = new LiveViewData();
         private bool _shoulStopLiveView;
 
 
@@ -48,7 +41,7 @@ namespace CameraControl.Devices.Sony
         public string EndPoint { get; set; }
         private readonly HttpClient mClient = new HttpClient();
         List<string> AvailableMethods;
-        private Timer _timer = new Timer(100);
+        private readonly Timer _timer = new Timer(100);
         private string _liveViewUrl = "";
         private long _lastZoomPos = 0;
         public SonyWifiCamera()
@@ -67,8 +60,10 @@ namespace CameraControl.Devices.Sony
             AvailableMethods = GetMethodTypes();
             ExecuteMethod("startRecMode");
             IsConnected = true;
-            ExposureMeteringMode = new PropertyValue<long>();
-            ExposureMeteringMode.Available = false;
+            ExposureMeteringMode = new PropertyValue<long>
+            {
+                Available = false
+            };
             LiveViewImageZoomRatio = new PropertyValue<long>();
             for (int i = 0; i < 101; i++)
             {
@@ -128,7 +123,7 @@ namespace CameraControl.Devices.Sony
                 SetCapability(prop, cap);
                 prop.ValueChanged += (sender, key, val) => CheckError(Post(CreateJson("setIsoSpeedRate", "1.0", key)));
             }
-            catch (Exception e)
+            catch (Exception)
             {
             }
         }
@@ -205,7 +200,7 @@ namespace CameraControl.Devices.Sony
             }
             catch (Exception)
             {
-                
+
             }
         }
 
@@ -219,7 +214,7 @@ namespace CameraControl.Devices.Sony
         {
             try
             {
-                var jString = Post(CreateJson("getEvent","1.0",false));
+                var jString = Post(CreateJson("getEvent", "1.0", false));
                 var json = Initialize(jString);
                 var jResult = json["result"] as JArray;
 
@@ -345,7 +340,7 @@ namespace CameraControl.Devices.Sony
                 {
                     if (exception.ErrorCode == 40403)
                     {
-                        firstRun = false;                        
+                        firstRun = false;
                     }
                     else
                     {
@@ -354,14 +349,14 @@ namespace CameraControl.Devices.Sony
                         throw;
                     }
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     IsBusy = false;
                     Log.Error("Sony capture error ", ex);
                     throw;
                 }
             }
-            
+
             foreach (var u in urls)
             {
                 var url = u;
@@ -382,16 +377,6 @@ namespace CameraControl.Devices.Sony
 
         public override void StartLiveView()
         {
-            string cmd = "{" +
-                         "\"method\": \"setLiveviewFrameInfo\"," +
-                         "\"params\": [" +
-                         "{" +
-                         "\"frameInfo\": false" +
-                         "}" +
-                         "]," +
-                         "\"id\": 1," +
-                         "\"version\": \"1.0\"" +
-                         "}\"";
             //CheckError(Post(cmd));
             _shoulStopLiveView = false;
             _liveViewUrl = AsPrimitive<string>(Post(CreateJson("startLiveview")));
@@ -448,7 +433,7 @@ namespace CameraControl.Devices.Sony
             prop.ReloadValues();
             prop.SetValue(cap.Current, false);
         }
-        
+
         private void ExecuteMethod(string method, params object[] prms)
         {
             var res = Post(CreateJson(method, prms));
@@ -513,8 +498,6 @@ namespace CameraControl.Devices.Sony
 
             try
             {
-                Task<HttpResponseMessage> task;
-
                 var response = mClient.PostAsync(EndPoint, content).Result;
                 return Encoding.UTF8.GetString(response.Content.ReadAsByteArrayAsync().Result);
 
@@ -627,7 +610,7 @@ namespace CameraControl.Devices.Sony
                     var buff = ReadBytes(s, 8);
                     heder.StartByte = buff[0];
                     heder.Type = buff[1];
-                    heder.SequenceNo = BitConverter.ToInt16(buff,2); ;
+                    heder.SequenceNo = BitConverter.ToInt16(buff, 2); ;
                     heder.TimeStamp = BitConverter.ToInt32(buff, 4); ;
                     PayloadHeader playload = new PayloadHeader();
                     //ByteArrayToStructure(s, ref playload);
@@ -637,15 +620,15 @@ namespace CameraControl.Devices.Sony
                     playload.JpgDataSize = BitConverter.ToUInt16(new byte[] { buff[6], buff[5], buff[4], 0 }, 0);
                     playload.PadingSize = buff[7];
 
-                    if (((CommonHeader) heder).Type == 0x02)
+                    if (heder.Type == 0x02)
                     {
                         if (playload.JpgDataSize > 0)
                         {
                             var data = ReadBytes(s, playload.JpgDataSize);
-                            _liveViewData.FocusX = BitConverter.ToInt16(new byte[] { data[1], data[0]}, 0);
+                            _liveViewData.FocusX = BitConverter.ToInt16(new byte[] { data[1], data[0] }, 0);
                             _liveViewData.FocusY = BitConverter.ToInt16(new byte[] { data[3], data[2] }, 0); ;
                             _liveViewData.FocusFrameXSize = BitConverter.ToInt16(new byte[] { data[5], data[4] }, 0) - _liveViewData.FocusX;
-                            _liveViewData.FocusFrameYSize = BitConverter.ToInt16(new byte[] { data[7], data[6] }, 0) - _liveViewData.FocusY ;
+                            _liveViewData.FocusFrameYSize = BitConverter.ToInt16(new byte[] { data[7], data[6] }, 0) - _liveViewData.FocusY;
                             _liveViewData.HaveFocusData = true;
                             _liveViewData.Focused = data[9] != 0;
                             _liveViewData.ImageWidth = 10000;

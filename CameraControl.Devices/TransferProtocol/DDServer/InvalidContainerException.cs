@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace CameraControl.Devices.TransferProtocol.DDServer
+﻿namespace CameraControl.Devices.TransferProtocol.DDServer
 {
     internal class InvalidContainerException : Exception
     {

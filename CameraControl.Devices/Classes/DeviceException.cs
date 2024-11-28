@@ -28,7 +28,6 @@
 
 #region
 
-using System;
 using System.Runtime.Serialization;
 
 #endregion
@@ -54,7 +53,7 @@ namespace CameraControl.Devices.Classes
         public DeviceException(string message, int errorcode)
             : base(message)
         {
-            ErrorCode = (uint) errorcode;
+            ErrorCode = (uint)errorcode;
         }
 
         public DeviceException(string format, params object[] args)

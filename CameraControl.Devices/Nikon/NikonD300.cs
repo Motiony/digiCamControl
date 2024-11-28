@@ -28,7 +28,6 @@
 
 #region
 
-using System;
 using CameraControl.Devices.Classes;
 using PortableDeviceLib;
 
@@ -50,8 +49,8 @@ namespace CameraControl.Devices.Nikon
         public override void StartLiveView()
         {
             if (!CaptureInSdRam)
-                SetProperty(CONST_CMD_SetDevicePropValue, new[] {(byte) 1}, CONST_PROP_RecordingMedia);
-            SetProperty(CONST_CMD_SetDevicePropValue, new[] {(byte) 1}, CONST_PROP_LiveViewMode);
+                SetProperty(CONST_CMD_SetDevicePropValue, new[] { (byte)1 }, CONST_PROP_RecordingMedia);
+            SetProperty(CONST_CMD_SetDevicePropValue, new[] { (byte)1 }, CONST_PROP_LiveViewMode);
             base.StartLiveView();
         }
 
@@ -59,7 +58,7 @@ namespace CameraControl.Devices.Nikon
         {
             base.StopLiveView();
             if (!CaptureInSdRam)
-                SetProperty(CONST_CMD_SetDevicePropValue, new[] {(byte) 0}, CONST_PROP_RecordingMedia);
+                SetProperty(CONST_CMD_SetDevicePropValue, new[] { (byte)0 }, CONST_PROP_RecordingMedia);
             DeviceReady();
         }
 
@@ -67,7 +66,7 @@ namespace CameraControl.Devices.Nikon
         {
             lock (Locker)
             {
-                MTPDataResponse response = ExecuteReadDataEx(CONST_CMD_GetDevicePropValue, CONST_PROP_LiveViewStatus );
+                MTPDataResponse response = ExecuteReadDataEx(CONST_CMD_GetDevicePropValue, CONST_PROP_LiveViewStatus);
                 ErrorCodes.GetException(response.ErrorCode);
                 // test if live view is on 
                 if (response.Data != null && response.Data.Length > 0 && response.Data[0] > 0)
@@ -84,26 +83,26 @@ namespace CameraControl.Devices.Nikon
 
                 DeviceReady();
                 byte oldval = 0;
-                var val = StillImageDevice.ExecuteReadData(CONST_CMD_GetDevicePropValue, CONST_PROP_AFModeSelect );
+                var val = StillImageDevice.ExecuteReadData(CONST_CMD_GetDevicePropValue, CONST_PROP_AFModeSelect);
                 if (val.Data != null && val.Data.Length > 0)
                     oldval = val.Data[0];
-                SetProperty(CONST_CMD_SetDevicePropValue, new[] {(byte) 4}, CONST_PROP_AFModeSelect);
+                SetProperty(CONST_CMD_SetDevicePropValue, new[] { (byte)4 }, CONST_PROP_AFModeSelect);
                 DeviceReady();
                 ErrorCodes.GetException(StillImageDevice.ExecuteWithNoData(CONST_CMD_InitiateCapture));
                 if (val.Data != null && val.Data.Length > 0)
-                    SetProperty(CONST_CMD_SetDevicePropValue, new[] {oldval}, CONST_PROP_AFModeSelect);
+                    SetProperty(CONST_CMD_SetDevicePropValue, new[] { oldval }, CONST_PROP_AFModeSelect);
             }
         }
 
         protected override PropertyValue<long> InitStillCaptureMode()
         {
             PropertyValue<long> res = new PropertyValue<long>()
-                                          {
-                                              Name = "Still Capture Mode",
-                                              IsEnabled = true,
-                                              Code = 0x5013,
-                                              SubType = typeof (UInt16)
-                                          };
+            {
+                Name = "Still Capture Mode",
+                IsEnabled = true,
+                Code = 0x5013,
+                SubType = typeof(UInt16)
+            };
             res.AddValues("Single shot (single-frame shooting)", 0x0001);
             res.AddValues("Continuous high-speed shooting (CH)", 0x0002);
             res.AddValues("Continuous low-speed shooting (CL)", 0x8010);

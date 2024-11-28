@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Xml.Serialization;
-using CameraControl.Devices.Classes;
+﻿using System.Xml.Serialization;
 
 namespace CameraControl.Devices.Custom
 {

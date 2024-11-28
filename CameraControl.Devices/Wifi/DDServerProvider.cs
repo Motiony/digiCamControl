@@ -1,11 +1,10 @@
-﻿using System;
-using CameraControl.Devices.Classes;
+﻿using CameraControl.Devices.Classes;
 using CameraControl.Devices.TransferProtocol;
 using CameraControl.Devices.TransferProtocol.DDServer;
 
 namespace CameraControl.Devices.Wifi
 {
-    public class DDServerProvider:IWifiDeviceProvider
+    public class DDServerProvider : IWifiDeviceProvider
     {
         public string Name { get; set; }
         public string DefaultIp { get; set; }
@@ -19,31 +18,31 @@ namespace CameraControl.Devices.Wifi
                 ip = address.Split(':')[0];
                 int.TryParse(address.Split(':')[1], out port);
             }
-                DdClient client = new DdClient();
-                if (!client.Open(ip, port))
-                    throw new Exception("No server was found!");
-                var devices = client.GetDevices();
-                if (devices.Count == 0)
-                    throw new Exception("No connected device was found!");
+            DdClient client = new DdClient();
+            if (!client.Open(ip, port))
+                throw new Exception("No server was found!");
+            var devices = client.GetDevices();
+            if (devices.Count == 0)
+                throw new Exception("No connected device was found!");
 
-                client.Connect(devices[0]);
-                DdServerProtocol protocol = new DdServerProtocol(client);
+            client.Connect(devices[0]);
+            DdServerProtocol protocol = new DdServerProtocol(client);
 
-                if (CameraDeviceManager.GetNativeDriver(protocol.Model) != null)
-                {
-                    DeviceDescriptor descriptor = new DeviceDescriptor { WpdId = "ddserver" };
-                    var cameraDevice = (ICameraDevice)Activator.CreateInstance(CameraDeviceManager.GetNativeDriver(protocol.Model));
-                    descriptor.StillImageDevice = protocol;
+            if (CameraDeviceManager.GetNativeDriver(protocol.Model) != null)
+            {
+                DeviceDescriptor descriptor = new DeviceDescriptor { WpdId = "ddserver" };
+                var cameraDevice = (ICameraDevice)Activator.CreateInstance(CameraDeviceManager.GetNativeDriver(protocol.Model));
+                descriptor.StillImageDevice = protocol;
 
-                    //cameraDevice.SerialNumber = StaticHelper.GetSerial(portableDevice.DeviceId);
-                    cameraDevice.Init(descriptor);
-                    descriptor.CameraDevice = cameraDevice;
-                    return descriptor;
-                }
-                else
-                {
-                    throw new Exception("Not Supported device " + protocol.Model);
-                }
+                //cameraDevice.SerialNumber = StaticHelper.GetSerial(portableDevice.DeviceId);
+                cameraDevice.Init(descriptor);
+                descriptor.CameraDevice = cameraDevice;
+                return descriptor;
+            }
+            else
+            {
+                throw new Exception("Not Supported device " + protocol.Model);
+            }
         }
 
         public DDServerProvider()

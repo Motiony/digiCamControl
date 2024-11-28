@@ -28,25 +28,21 @@
 
 #region
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Timers;
-
 #endregion
 
 namespace CameraControl.Devices.Classes
 {
     public class DelayedDelegate
     {
-        private static Timer runDelegates;
-        private static Dictionary<Action, DateTime> delayedDelegates = new Dictionary<Action, DateTime>();
+        private static readonly System.Timers.Timer runDelegates;
+        private static readonly Dictionary<Action, DateTime> delayedDelegates = [];
 
         static DelayedDelegate()
         {
-            runDelegates = new Timer();
-            runDelegates.Interval = 250;
+            runDelegates = new System.Timers.Timer
+            {
+                Interval = 250
+            };
             runDelegates.Elapsed += RunDelegates;
             runDelegates.Enabled = true;
             runDelegates.Start();
@@ -59,7 +55,7 @@ namespace CameraControl.Devices.Classes
 
         private static void RunDelegates(object sender, EventArgs e)
         {
-            List<Action> removeDelegates = new List<Action>();
+            List<Action> removeDelegates = [];
 
             foreach (Action method in delayedDelegates.Keys)
             {

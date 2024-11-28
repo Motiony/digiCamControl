@@ -28,7 +28,6 @@
 
 #region
 
-using System;
 using CameraControl.Devices.Classes;
 
 #endregion
@@ -53,7 +52,7 @@ namespace CameraControl.Devices
         public static void Debug(object message, Exception exception)
         {
             if (LogDebug != null)
-                LogDebug(new LogEventArgs() {Exception = exception, Message = message});
+                LogDebug(new LogEventArgs() { Exception = exception, Message = message });
         }
 
         public static void Debug(object message)
@@ -64,7 +63,7 @@ namespace CameraControl.Devices
         public static void Error(object message, Exception exception)
         {
             if (LogError != null)
-                LogError(new LogEventArgs() {Exception = exception, Message = message});
+                LogError(new LogEventArgs() { Exception = exception, Message = message });
         }
 
         public static void Error(object message)
@@ -75,7 +74,7 @@ namespace CameraControl.Devices
         public static void Info(object message, Exception exception)
         {
             if (LogInfo != null)
-                LogInfo(new LogEventArgs() {Exception = exception, Message = message});
+                LogInfo(new LogEventArgs() { Exception = exception, Message = message });
         }
 
         public static void Info(object message)

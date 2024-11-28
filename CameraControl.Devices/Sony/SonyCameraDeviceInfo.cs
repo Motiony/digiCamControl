@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-
 namespace Kazyx.DeviceDiscovery
 {
     public class SonyCameraDeviceInfo

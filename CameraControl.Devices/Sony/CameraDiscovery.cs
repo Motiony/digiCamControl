@@ -1,14 +1,8 @@
 ﻿using Kazyx.DeviceDiscovery;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Xml.Linq;
 
 namespace SonyCameraCommunication
@@ -16,16 +10,15 @@ namespace SonyCameraCommunication
     public class CameraDiscovery
     {
 
-        IPEndPoint localEndPoint = new IPEndPoint(IPAddress.Parse("128.0.0.1"), 60000);
-        IPEndPoint multicastEndpoint = new IPEndPoint(IPAddress.Parse("239.255.255.250"), 1900);
+        readonly IPEndPoint localEndPoint = new IPEndPoint(IPAddress.Parse("128.0.0.1"), 60000);
+        readonly IPEndPoint multicastEndpoint = new IPEndPoint(IPAddress.Parse("239.255.255.250"), 1900);
 
-        Socket udpSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+        readonly Socket udpSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
 
         public static string response;
 
         public bool UDPSocketSetup()
         {
-            string udpStatus;
             bool binded = false;
             try
             {
@@ -63,14 +56,14 @@ namespace SonyCameraCommunication
                     }
 
                     // now we have adapter index as p.Index, let put it to socket option
-                    udpSocket.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.MulticastInterface, (int)IPAddress.HostToNetworkOrder(p.Index));
+                    udpSocket.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.MulticastInterface, IPAddress.HostToNetworkOrder(p.Index));
                 }
-                
-                if(!binded)
+
+                if (!binded)
                     throw new Exception("Camea not connected !");
                 return true;
             }
-            catch (Exception exc)
+            catch (Exception)
             {
                 return false;
             }
@@ -80,7 +73,7 @@ namespace SonyCameraCommunication
         {
             string searchString = "M-SEARCH * HTTP/1.1\r\nHOST:239.255.255.250:1900\r\nMAN:\"ssdp:discover\"\r\nMX:1\r\nST:urn:schemas-sony-com:service:ScalarWebAPI:1\r\n\r\n";
 
-           
+
             byte[] receiveBuffer = new byte[64000];
 
             int receivedBytes = 0;
@@ -102,7 +95,7 @@ namespace SonyCameraCommunication
                         }
                     }
                 }
-                catch (Exception exc)
+                catch (Exception)
                 {
                     return false;
                 }

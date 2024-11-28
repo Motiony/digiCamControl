@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Xml.Serialization;
+﻿using System.Xml.Serialization;
 
 namespace CameraControl.Devices.Custom
 {
@@ -15,7 +10,7 @@ namespace CameraControl.Devices.Custom
         public string BaseDevice { get; set; }
         [XmlAttribute]
         public string Manufacturer { get; set; }
-        
+
         public string Description { get; set; }
 
         public List<DeviceProperty> Properties { get; set; }
@@ -27,10 +22,10 @@ namespace CameraControl.Devices.Custom
 
         public void Save(string file)
         {
-                XmlSerializer serializer = new XmlSerializer(typeof(DeviceDescription));
-                Stream writer = new FileStream(file, FileMode.Create);
-                serializer.Serialize(writer, this);
-                writer.Close();
+            XmlSerializer serializer = new XmlSerializer(typeof(DeviceDescription));
+            Stream writer = new FileStream(file, FileMode.Create);
+            serializer.Serialize(writer, this);
+            writer.Close();
         }
 
         public static DeviceDescription Load(string file)
@@ -47,12 +42,12 @@ namespace CameraControl.Devices.Custom
             }
             catch (Exception ex)
             {
-                Log.Error("Error load device description "+file,ex);
+                Log.Error("Error load device description " + file, ex);
                 return null;
 
             }
         }
-       
+
     }
 
 }

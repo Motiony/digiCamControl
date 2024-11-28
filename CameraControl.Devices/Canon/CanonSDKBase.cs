@@ -28,21 +28,16 @@
 
 #region
 
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Drawing.Imaging;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading;
-using System.Timers;
 using CameraControl.Devices.Classes;
 using Canon.Eos.Framework;
 using Canon.Eos.Framework.Eventing;
 using Canon.Eos.Framework.Internal;
 using Canon.Eos.Framework.Internal.SDK;
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.Runtime.InteropServices;
+using System.Text;
+using System.Timers;
 
 #endregion
 
@@ -54,7 +49,7 @@ namespace CameraControl.Devices.Canon
         private bool _recording = false;
 
         public EosCamera Camera = null;
-        private System.Timers.Timer _shutdownTimer = new System.Timers.Timer(1000*60);
+        private readonly System.Timers.Timer _shutdownTimer = new System.Timers.Timer(1000 * 60);
 
         protected Dictionary<uint, string> _shutterTable = new Dictionary<uint, string>
                                                                {
@@ -359,7 +354,7 @@ namespace CameraControl.Devices.Canon
                 }
                 catch (Exception e)
                 {
-                    Log.Error("Unable to set time",e);
+                    Log.Error("Unable to set time", e);
                 }
             }
         }
@@ -434,7 +429,7 @@ namespace CameraControl.Devices.Canon
             InitFocus();
             InitOther();
             InitCompression();
-            Battery = (int) Camera.BatteryLevel + 20;
+            Battery = (int)Camera.BatteryLevel + 20;
             IsBusy = false;
             CaptureInSdRam = true;
             Camera.PropertyChanged += Camera_PropertyChanged;
@@ -466,7 +461,7 @@ namespace CameraControl.Devices.Canon
             AdvancedProperties.Add(InitAEBracket());
             foreach (PropertyValue<long> value in AdvancedProperties)
             {
-                value.SetValue((long)Camera.GetProperty(value.Code), false);
+                value.SetValue(Camera.GetProperty(value.Code), false);
             }
         }
 
@@ -482,7 +477,7 @@ namespace CameraControl.Devices.Canon
             };
 
             var data = GetSettingsList(Edsdk.PropID_FlashCompensation);
-            
+
             res.ValueChanged += FlashExposureCompensation_ValueChanged;
             try
             {
@@ -528,7 +523,7 @@ namespace CameraControl.Devices.Canon
                 Name = "Drive Mode",
                 IsEnabled = true,
                 Code = Edsdk.PropID_DriveMode,
-                SubType = typeof (UInt32),
+                SubType = typeof(UInt32),
                 DisableIfWrongValue = true
             };
             var r = Camera.GetPropertyDescription(Edsdk.PropID_DriveMode);
@@ -564,7 +559,7 @@ namespace CameraControl.Devices.Canon
                 res.AddValues("Silent LS continuous", 16);
             res.ReloadValues();
             res.ValueChanged +=
-                (sender, key, val) => Camera.SetProperty(res.Code, val); 
+                (sender, key, val) => Camera.SetProperty(res.Code, val);
             return res;
         }
 
@@ -621,7 +616,7 @@ namespace CameraControl.Devices.Canon
             res.AddValues("Bracket off", 0);
             for (int i = 1; i < r.NumElements; i++)
             {
-                res.AddValues("Step "+i, r.PropDesc[i]);
+                res.AddValues("Step " + i, r.PropDesc[i]);
             }
             res.ReloadValues();
             res.ValueChanged +=
@@ -633,7 +628,7 @@ namespace CameraControl.Devices.Canon
         }
         private void InitOther()
         {
-            LiveViewImageZoomRatio = new PropertyValue<long> {Name = "LiveViewImageZoomRatio"};
+            LiveViewImageZoomRatio = new PropertyValue<long> { Name = "LiveViewImageZoomRatio" };
             LiveViewImageZoomRatio.AddValues("All", 1);
             LiveViewImageZoomRatio.AddValues("5x", 5);
             //LiveViewImageZoomRatio.AddValues("10x", 10);
@@ -646,7 +641,7 @@ namespace CameraControl.Devices.Canon
         {
             var data = GetSettingsList(Edsdk.PropID_ImageQuality);
             CompressionSetting = new PropertyValue<long>();
-            CompressionSetting.AddValues("Large Fine JPEG", (int) new EosImageQuality(){PrimaryCompressLevel = EosCompressLevel.Fine,PrimaryImageFormat = EosImageFormat.Jpeg,PrimaryImageSize = EosImageSize.Large,SecondaryCompressLevel = EosCompressLevel.Unknown,SecondaryImageFormat = EosImageFormat.Unknown, SecondaryImageSize = EosImageSize.Unknown}.ToBitMask());
+            CompressionSetting.AddValues("Large Fine JPEG", (int)new EosImageQuality() { PrimaryCompressLevel = EosCompressLevel.Fine, PrimaryImageFormat = EosImageFormat.Jpeg, PrimaryImageSize = EosImageSize.Large, SecondaryCompressLevel = EosCompressLevel.Unknown, SecondaryImageFormat = EosImageFormat.Unknown, SecondaryImageSize = EosImageSize.Unknown }.ToBitMask());
             CompressionSetting.AddValues("Large Normal JPEG", (int)new EosImageQuality() { PrimaryCompressLevel = EosCompressLevel.Normal, PrimaryImageFormat = EosImageFormat.Jpeg, PrimaryImageSize = EosImageSize.Large, SecondaryCompressLevel = EosCompressLevel.Unknown, SecondaryImageFormat = EosImageFormat.Unknown, SecondaryImageSize = EosImageSize.Unknown }.ToBitMask());
             CompressionSetting.AddValues("Medium Fine JPEG", (int)new EosImageQuality() { PrimaryCompressLevel = EosCompressLevel.Fine, PrimaryImageFormat = EosImageFormat.Jpeg, PrimaryImageSize = EosImageSize.Middle, SecondaryCompressLevel = EosCompressLevel.Unknown, SecondaryImageFormat = EosImageFormat.Unknown, SecondaryImageSize = EosImageSize.Unknown }.ToBitMask());
             CompressionSetting.AddValues("Medium Normal JPEG", (int)new EosImageQuality() { PrimaryCompressLevel = EosCompressLevel.Normal, PrimaryImageFormat = EosImageFormat.Jpeg, PrimaryImageSize = EosImageSize.Middle, SecondaryCompressLevel = EosCompressLevel.Unknown, SecondaryImageFormat = EosImageFormat.Unknown, SecondaryImageSize = EosImageSize.Unknown }.ToBitMask());
@@ -654,10 +649,10 @@ namespace CameraControl.Devices.Canon
             CompressionSetting.AddValues("Small Normal JPEG", (int)new EosImageQuality() { PrimaryCompressLevel = EosCompressLevel.Normal, PrimaryImageFormat = EosImageFormat.Jpeg, PrimaryImageSize = EosImageSize.Small2, SecondaryCompressLevel = EosCompressLevel.Unknown, SecondaryImageFormat = EosImageFormat.Unknown, SecondaryImageSize = EosImageSize.Unknown }.ToBitMask());
             CompressionSetting.AddValues("Smaller JPEG", (int)new EosImageQuality() { PrimaryCompressLevel = EosCompressLevel.Fine, PrimaryImageFormat = EosImageFormat.Jpeg, PrimaryImageSize = EosImageSize.Small3, SecondaryCompressLevel = EosCompressLevel.Unknown, SecondaryImageFormat = EosImageFormat.Unknown, SecondaryImageSize = EosImageSize.Unknown }.ToBitMask());
             CompressionSetting.AddValues("Tiny JPEG", (int)new EosImageQuality() { PrimaryCompressLevel = EosCompressLevel.Fine, PrimaryImageFormat = EosImageFormat.Jpeg, PrimaryImageSize = EosImageSize.Small4, SecondaryCompressLevel = EosCompressLevel.Unknown, SecondaryImageFormat = EosImageFormat.Unknown, SecondaryImageSize = EosImageSize.Unknown }.ToBitMask());
-            CompressionSetting.AddValues("RAW + Large Fine JPEG", (int)new EosImageQuality() {PrimaryImageFormat =EosImageFormat.Cr2,PrimaryCompressLevel = EosCompressLevel.Lossless, PrimaryImageSize = EosImageSize.Large, SecondaryImageSize =EosImageSize.Large,SecondaryCompressLevel = EosCompressLevel.Fine, SecondaryImageFormat = EosImageFormat.Jpeg }.ToBitMask());
-            CompressionSetting.AddValues("RAW", (int)new EosImageQuality() { PrimaryImageFormat = EosImageFormat.Cr2, PrimaryCompressLevel = EosCompressLevel.Lossless, PrimaryImageSize = EosImageSize.Large, SecondaryCompressLevel = EosCompressLevel.Unknown, SecondaryImageFormat = EosImageFormat.Unknown, SecondaryImageSize = EosImageSize.Unknown}.ToBitMask());
-            CompressionSetting.Filter(data.Select(i => (long) i).ToList());
-            CompressionSetting.SetValue((int) Camera.ImageQuality.ToBitMask());
+            CompressionSetting.AddValues("RAW + Large Fine JPEG", (int)new EosImageQuality() { PrimaryImageFormat = EosImageFormat.Cr2, PrimaryCompressLevel = EosCompressLevel.Lossless, PrimaryImageSize = EosImageSize.Large, SecondaryImageSize = EosImageSize.Large, SecondaryCompressLevel = EosCompressLevel.Fine, SecondaryImageFormat = EosImageFormat.Jpeg }.ToBitMask());
+            CompressionSetting.AddValues("RAW", (int)new EosImageQuality() { PrimaryImageFormat = EosImageFormat.Cr2, PrimaryCompressLevel = EosCompressLevel.Lossless, PrimaryImageSize = EosImageSize.Large, SecondaryCompressLevel = EosCompressLevel.Unknown, SecondaryImageFormat = EosImageFormat.Unknown, SecondaryImageSize = EosImageSize.Unknown }.ToBitMask());
+            CompressionSetting.Filter(data.Select(i => (long)i).ToList());
+            CompressionSetting.SetValue((int)Camera.ImageQuality.ToBitMask());
             CompressionSetting.ValueChanged += CompressionSetting_ValueChanged;
         }
 
@@ -687,7 +682,7 @@ namespace CameraControl.Devices.Canon
                     switch (e.PropertyId)
                     {
                         case Edsdk.PropID_ExposureCompensation:
-                            ExposureCompensation.SetValue((int) Camera.GetProperty(Edsdk.PropID_ExposureCompensation),
+                            ExposureCompensation.SetValue((int)Camera.GetProperty(Edsdk.PropID_ExposureCompensation),
                                 false);
                             break;
                         case Edsdk.PropID_AEMode:
@@ -705,20 +700,20 @@ namespace CameraControl.Devices.Canon
                             ShutterSpeed.SetValue(Camera.GetProperty(Edsdk.PropID_Tv), false);
                             break;
                         case Edsdk.PropID_Av:
-                            FNumber.SetValue((int) Camera.GetProperty(Edsdk.PropID_Av), false);
+                            FNumber.SetValue((int)Camera.GetProperty(Edsdk.PropID_Av), false);
                             break;
                         case Edsdk.PropID_MeteringMode:
-                            ExposureMeteringMode.SetValue((int) Camera.GetProperty(Edsdk.PropID_MeteringMode), false);
+                            ExposureMeteringMode.SetValue((int)Camera.GetProperty(Edsdk.PropID_MeteringMode), false);
                             break;
                         case Edsdk.PropID_AFMode:
-                            FocusMode.SetValue((int) Camera.GetProperty(Edsdk.PropID_AFMode), false);
+                            FocusMode.SetValue((int)Camera.GetProperty(Edsdk.PropID_AFMode), false);
                             break;
                         case Edsdk.PropID_ImageQuality:
-                            int i = (int) Camera.GetProperty(Edsdk.PropID_ImageQuality);
-                            CompressionSetting.SetValue((int) Camera.ImageQuality.ToBitMask(), false);
+                            int i = (int)Camera.GetProperty(Edsdk.PropID_ImageQuality);
+                            CompressionSetting.SetValue((int)Camera.ImageQuality.ToBitMask(), false);
                             break;
                         case Edsdk.PropID_BatteryLevel:
-                            Battery = (int) Camera.BatteryLevel + 20;
+                            Battery = (int)Camera.BatteryLevel + 20;
                             break;
                         case Edsdk.PropID_AEBracketType:
                             int ae = (int)Camera.GetProperty(Edsdk.PropID_AEBracketType);
@@ -737,7 +732,7 @@ namespace CameraControl.Devices.Canon
                         PropertyValue<long> advancedProperty in
                             AdvancedProperties.Where(advancedProperty => advancedProperty.Code == e.PropertyId))
                     {
-                        advancedProperty.SetValue((long) Camera.GetProperty(advancedProperty.Code), false);
+                        advancedProperty.SetValue(Camera.GetProperty(advancedProperty.Code), false);
                     }
                 }
                 catch (Exception exception)
@@ -753,18 +748,18 @@ namespace CameraControl.Devices.Canon
             {
                 Log.Debug("Picture taken event received type" + e.GetType().ToString());
                 PhotoCapturedEventArgs args = new PhotoCapturedEventArgs
-                                                  {
-                                                      WiaImageItem = null,
-                                                      //EventArgs =
-                                                      //  new PortableDeviceEventArgs(new PortableDeviceEventType()
-                                                      //  {
-                                                      //      ObjectHandle =
-                                                      //        (uint)longeventParam
-                                                      //  }),
-                                                      CameraDevice = this,
-                                                      FileName = "IMG0000.jpg",
-                                                      Handle = e.Pointer != IntPtr.Zero  ? (object) e.Pointer : e
-                                                  };
+                {
+                    WiaImageItem = null,
+                    //EventArgs =
+                    //  new PortableDeviceEventArgs(new PortableDeviceEventType()
+                    //  {
+                    //      ObjectHandle =
+                    //        (uint)longeventParam
+                    //  }),
+                    CameraDevice = this,
+                    FileName = "IMG0000.jpg",
+                    Handle = e.Pointer != IntPtr.Zero ? e.Pointer : e
+                };
 
                 EosFileImageEventArgs file = e as EosFileImageEventArgs;
                 if (file != null)
@@ -810,7 +805,7 @@ namespace CameraControl.Devices.Canon
         private void _camera_Shutdown(object sender, EventArgs e)
         {
             IsConnected = false;
-            OnCameraDisconnected(this, new DisconnectCameraEventArgs {StillImageDevice = null, EosCamera = Camera});
+            OnCameraDisconnected(this, new DisconnectCameraEventArgs { StillImageDevice = null, EosCamera = Camera });
         }
 
         public override void Close()
@@ -857,8 +852,10 @@ namespace CameraControl.Devices.Canon
 
         private void InitShutterSpeed()
         {
-            ShutterSpeed = new PropertyValue<long>();
-            ShutterSpeed.Name = "ShutterSpeed";
+            ShutterSpeed = new PropertyValue<long>
+            {
+                Name = "ShutterSpeed"
+            };
             ShutterSpeed.ValueChanged += ShutterSpeed_ValueChanged;
             ReInitShutterSpeed();
         }
@@ -875,7 +872,7 @@ namespace CameraControl.Devices.Canon
                     {
                         if (data.Count > 0)
                         {
-                            if (data.Contains((int) keyValuePair.Key))
+                            if (data.Contains((int)keyValuePair.Key))
                                 ShutterSpeed.AddValues(keyValuePair.Value, keyValuePair.Key);
                         }
                         else
@@ -918,7 +915,7 @@ namespace CameraControl.Devices.Canon
 
         private void InitFNumber()
         {
-            FNumber = new PropertyValue<long> {IsEnabled = true, Name = "FNumber"};
+            FNumber = new PropertyValue<long> { IsEnabled = true, Name = "FNumber" };
             FNumber.ValueChanged += FNumber_ValueChanged;
             ReInitFNumber(true);
         }
@@ -970,7 +967,7 @@ namespace CameraControl.Devices.Canon
                 }
                 else
                 {
-                    FNumber.SetValue((int) value, false);
+                    FNumber.SetValue((int)value, false);
                     FNumber.IsEnabled = true;
                 }
             }
@@ -1005,14 +1002,14 @@ namespace CameraControl.Devices.Canon
 
         public List<int> GetSettingsList(uint PropID)
         {
-            if (Camera.Handle!= IntPtr.Zero)
+            if (Camera.Handle != IntPtr.Zero)
             {
-                    //get the list of possible values
-                    Edsdk.EdsPropertyDesc des = new Edsdk.EdsPropertyDesc();
-                    var Error = Edsdk.EdsGetPropertyDesc(Camera.Handle, PropID, out des);
-                    return des.PropDesc.Take(des.NumElements).ToList();
+                //get the list of possible values
+                Edsdk.EdsPropertyDesc des = new Edsdk.EdsPropertyDesc();
+                var Error = Edsdk.EdsGetPropertyDesc(Camera.Handle, PropID, out des);
+                return des.PropDesc.Take(des.NumElements).ToList();
             }
-            return new List<int>();
+            return [];
         }
 
         private void ReInitIso()
@@ -1022,7 +1019,7 @@ namespace CameraControl.Devices.Canon
                 var data = GetSettingsList(Edsdk.PropID_ISOSpeed);
                 long value = Camera.GetProperty(Edsdk.PropID_ISOSpeed);
                 bool shouldinit = IsoNumber.Values.Count == 0;
-               
+
                 if (data.Count > 0)
                     IsoNumber.Clear();
 
@@ -1030,7 +1027,7 @@ namespace CameraControl.Devices.Canon
                 {
                     foreach (KeyValuePair<uint, string> keyValuePair in _isoTable)
                     {
-                        IsoNumber.AddValues(keyValuePair.Value, (int) keyValuePair.Key);
+                        IsoNumber.AddValues(keyValuePair.Value, (int)keyValuePair.Key);
                     }
                 }
                 else
@@ -1038,9 +1035,9 @@ namespace CameraControl.Devices.Canon
                     foreach (
                         KeyValuePair<uint, string> keyValuePair in
                             _isoTable.Where(keyValuePair => data.Count > 0).Where(
-                                keyValuePair => data.Contains((int) keyValuePair.Key)))
+                                keyValuePair => data.Contains((int)keyValuePair.Key)))
                     {
-                        IsoNumber.AddValues(keyValuePair.Value, (int) keyValuePair.Key);
+                        IsoNumber.AddValues(keyValuePair.Value, (int)keyValuePair.Key);
                     }
                 }
                 IsoNumber.ReloadValues();
@@ -1056,7 +1053,7 @@ namespace CameraControl.Devices.Canon
 
         private void InitMode()
         {
-           Mode = new PropertyValue<long>();
+            Mode = new PropertyValue<long>();
             Mode.ValueChanged += Mode_ValueChanged;
             try
             {
@@ -1065,7 +1062,7 @@ namespace CameraControl.Devices.Canon
                     Mode.AddValues(keyValuePair.Value, keyValuePair.Key);
                 }
                 Mode.ReloadValues();
-                Mode.SetValue((uint) Camera.GetProperty(Edsdk.PropID_AEMode), false);
+                Mode.SetValue((uint)Camera.GetProperty(Edsdk.PropID_AEMode), false);
                 Mode.IsEnabled = true;
             }
             catch (Exception ex)
@@ -1101,7 +1098,7 @@ namespace CameraControl.Devices.Canon
                 {
                     if (data.Count == 0)
                     {
-                        ExposureCompensation.AddValues(keyValuePair.Value, (int)keyValuePair.Key);                        
+                        ExposureCompensation.AddValues(keyValuePair.Value, (int)keyValuePair.Key);
                     }
                     else
                     {
@@ -1111,7 +1108,7 @@ namespace CameraControl.Devices.Canon
                 }
                 ExposureCompensation.ReloadValues();
                 ExposureCompensation.IsEnabled = true;
-                ExposureCompensation.SetValue((int) Camera.GetProperty(Edsdk.PropID_ExposureCompensation), false);
+                ExposureCompensation.SetValue((int)Camera.GetProperty(Edsdk.PropID_ExposureCompensation), false);
             }
             catch (Exception exception)
             {
@@ -1128,12 +1125,12 @@ namespace CameraControl.Devices.Canon
             {
                 foreach (KeyValuePair<uint, string> keyValuePair in _wbTable)
                 {
-                    if (data.Count > 0 && data.Contains((int) keyValuePair.Key))
-                        WhiteBalance.AddValues(keyValuePair.Value, (int) keyValuePair.Key);
+                    if (data.Count > 0 && data.Contains((int)keyValuePair.Key))
+                        WhiteBalance.AddValues(keyValuePair.Value, (int)keyValuePair.Key);
                 }
                 WhiteBalance.ReloadValues();
                 WhiteBalance.IsEnabled = true;
-                WhiteBalance.SetValue((long) Camera.GetProperty(Edsdk.PropID_WhiteBalance), false);
+                WhiteBalance.SetValue(Camera.GetProperty(Edsdk.PropID_WhiteBalance), false);
             }
             catch (Exception exception)
             {
@@ -1162,12 +1159,12 @@ namespace CameraControl.Devices.Canon
             {
                 foreach (KeyValuePair<uint, string> keyValuePair in _meteringTable)
                 {
-                    if (data.Contains((int) keyValuePair.Key))
-                        ExposureMeteringMode.AddValues(keyValuePair.Value, (int) keyValuePair.Key);
+                    if (data.Contains((int)keyValuePair.Key))
+                        ExposureMeteringMode.AddValues(keyValuePair.Value, (int)keyValuePair.Key);
                 }
                 ExposureMeteringMode.ReloadValues();
                 ExposureMeteringMode.IsEnabled = true;
-                ExposureMeteringMode.SetValue((int) Camera.GetProperty(Edsdk.PropID_MeteringMode), false);
+                ExposureMeteringMode.SetValue((int)Camera.GetProperty(Edsdk.PropID_MeteringMode), false);
             }
             catch (Exception exception)
             {
@@ -1184,12 +1181,12 @@ namespace CameraControl.Devices.Canon
             {
                 foreach (KeyValuePair<uint, string> keyValuePair in _focusModeTable)
                 {
-                    if (data.Contains((int) keyValuePair.Key))
-                        FocusMode.AddValues(keyValuePair.Value, (int) keyValuePair.Key);
+                    if (data.Contains((int)keyValuePair.Key))
+                        FocusMode.AddValues(keyValuePair.Value, (int)keyValuePair.Key);
                 }
                 FocusMode.ReloadValues();
                 FocusMode.IsEnabled = true;
-                FocusMode.SetValue((int) Camera.GetProperty(Edsdk.PropID_AFMode), false);
+                FocusMode.SetValue((int)Camera.GetProperty(Edsdk.PropID_AFMode), false);
             }
             catch (Exception exception)
             {
@@ -1280,7 +1277,7 @@ namespace CameraControl.Devices.Canon
             Camera.SendCommand(Edsdk.CameraCommand_DoEvfAf, 0);
             //ErrorCodes.GetCanonException(Camera.SendCommand(Edsdk.CameraCommand_DoEvfAf, 0));
             return Camera.SendCommand(Edsdk.CameraCommand_PressShutterButton,
-                (int) Edsdk.EdsShutterButton.CameraCommand_ShutterButton_OFF);
+                (int)Edsdk.EdsShutterButton.CameraCommand_ShutterButton_OFF);
         }
 
         public void PressButton()
@@ -1297,7 +1294,7 @@ namespace CameraControl.Devices.Canon
 
         public void ReleaseButton()
         {
-           Camera.SendCommand(Edsdk.CameraCommand_PressShutterButton,(int)Edsdk.EdsShutterButton.CameraCommand_ShutterButton_OFF);
+            Camera.SendCommand(Edsdk.CameraCommand_PressShutterButton, (int)Edsdk.EdsShutterButton.CameraCommand_ShutterButton_OFF);
         }
 
 
@@ -1379,8 +1376,8 @@ namespace CameraControl.Devices.Canon
                 ResetShutterButton();
                 if (_liveViewImageData != null)
                 {
-                    x -= (_liveViewImageData.ZommBounds.Width/2);
-                    y -= (_liveViewImageData.ZommBounds.Height/2);
+                    x -= (_liveViewImageData.ZommBounds.Width / 2);
+                    y -= (_liveViewImageData.ZommBounds.Height / 2);
                 }
                 if (x < 0)
                     x = 0;
@@ -1389,49 +1386,49 @@ namespace CameraControl.Devices.Canon
                 Camera.LiveViewqueue.Enqueue(
                     () =>
                         Camera.SetPropertyIntegerArrayData(Edsdk.PropID_Evf_ZoomPosition,
-                            new uint[] {(uint) x, (uint) y}));
+                            new uint[] { (uint)x, (uint)y }));
             }
         }
 
         public override LiveViewData GetLiveViewImage()
         {
 
-                LiveViewData viewData = new LiveViewData();
-                if (Monitor.TryEnter(Locker, 10))
+            LiveViewData viewData = new LiveViewData();
+            if (Monitor.TryEnter(Locker, 10))
+            {
+                try
                 {
-                    try
+                    if (Camera == null)
+                        return viewData;
+                    Camera.DownloadEvf();
+                    if (_liveViewImageData != null)
                     {
-                        if (Camera == null)
-                            return viewData;
-                        Camera.DownloadEvf();
-                        if (_liveViewImageData != null)
-                        {
-                            //DeviceReady();
-                            viewData.HaveFocusData = true;
-                            viewData.ImageDataPosition = 0;
-                            viewData.ImageData = _liveViewImageData.ImageData;
-                            viewData.ImageHeight = _liveViewImageData.ImageSize.Height;
-                            viewData.ImageWidth = _liveViewImageData.ImageSize.Width;
-                            viewData.LiveViewImageHeight = 100;
-                            viewData.LiveViewImageWidth = 100;
-                            viewData.FocusX = _liveViewImageData.ZommBounds.X +
-                                              (_liveViewImageData.ZommBounds.Width / 2);
-                            viewData.FocusY = _liveViewImageData.ZommBounds.Y +
-                                              (_liveViewImageData.ZommBounds.Height / 2);
-                            viewData.FocusFrameXSize = _liveViewImageData.ZommBounds.Width;
-                            viewData.FocusFrameYSize = _liveViewImageData.ZommBounds.Height;
-                            viewData.MovieIsRecording = _recording;
-                        }
-                    }
-                    catch (Exception)
-                    {
-                        //Log.Error("Error get live view image ", e);
-                    }
-                    finally
-                    {
-                        Monitor.Exit(Locker);
+                        //DeviceReady();
+                        viewData.HaveFocusData = true;
+                        viewData.ImageDataPosition = 0;
+                        viewData.ImageData = _liveViewImageData.ImageData;
+                        viewData.ImageHeight = _liveViewImageData.ImageSize.Height;
+                        viewData.ImageWidth = _liveViewImageData.ImageSize.Width;
+                        viewData.LiveViewImageHeight = 100;
+                        viewData.LiveViewImageWidth = 100;
+                        viewData.FocusX = _liveViewImageData.ZommBounds.X +
+                                          (_liveViewImageData.ZommBounds.Width / 2);
+                        viewData.FocusY = _liveViewImageData.ZommBounds.Y +
+                                          (_liveViewImageData.ZommBounds.Height / 2);
+                        viewData.FocusFrameXSize = _liveViewImageData.ZommBounds.Width;
+                        viewData.FocusFrameYSize = _liveViewImageData.ZommBounds.Height;
+                        viewData.MovieIsRecording = _recording;
                     }
                 }
+                catch (Exception)
+                {
+                    //Log.Error("Error get live view image ", e);
+                }
+                finally
+                {
+                    Monitor.Exit(Locker);
+                }
+            }
             return viewData;
         }
 
@@ -1464,24 +1461,24 @@ namespace CameraControl.Devices.Canon
         {
             ResetShutterButton();
             Camera.PauseLiveview();
-            
+
             try
             {
                 ErrorCodes.GetCanonException(Camera.SendCommand(Edsdk.CameraCommand_DoEvfAf, 1));
-         //       ErrorCodes.GetCanonException(
-         //Camera.SendCommand(Edsdk.CameraCommand_PressShutterButton,
-         //                 (int)Edsdk.EdsShutterButton.CameraCommand_ShutterButton_OFF));
-         //       ErrorCodes.GetCanonException(
-         //           Camera.SendCommand(Edsdk.CameraCommand_PressShutterButton,
-         //               (int)Edsdk.EdsShutterButton.CameraCommand_ShutterButton_Halfway));
-         //       ErrorCodes.GetCanonException(
-         //                Camera.SendCommand(Edsdk.CameraCommand_PressShutterButton,
-         //                                 (int)Edsdk.EdsShutterButton.CameraCommand_ShutterButton_OFF));
+                //       ErrorCodes.GetCanonException(
+                //Camera.SendCommand(Edsdk.CameraCommand_PressShutterButton,
+                //                 (int)Edsdk.EdsShutterButton.CameraCommand_ShutterButton_OFF));
+                //       ErrorCodes.GetCanonException(
+                //           Camera.SendCommand(Edsdk.CameraCommand_PressShutterButton,
+                //               (int)Edsdk.EdsShutterButton.CameraCommand_ShutterButton_Halfway));
+                //       ErrorCodes.GetCanonException(
+                //                Camera.SendCommand(Edsdk.CameraCommand_PressShutterButton,
+                //                                 (int)Edsdk.EdsShutterButton.CameraCommand_ShutterButton_OFF));
 
             }
             finally
             {
-                Camera.ResumeLiveview();                
+                Camera.ResumeLiveview();
             }
         }
 
@@ -1491,7 +1488,7 @@ namespace CameraControl.Devices.Canon
 
             int focus = 0;
             var res = Camera.SendCommand(Edsdk.CameraCommand_DriveLensEvf,
-                (int) (step < 0 ? Edsdk.EvfDriveLens_Near1 : Edsdk.EvfDriveLens_Far1));
+                (int)(step < 0 ? Edsdk.EvfDriveLens_Near1 : Edsdk.EvfDriveLens_Far1));
             //if (i%10 == 0)
             //    Camera.DownloadEvfInternal();
             if (res == Edsdk.EDS_ERR_OK)
@@ -1510,13 +1507,13 @@ namespace CameraControl.Devices.Canon
                     switch (amount)
                     {
                         case FocusAmount.Small:
-                            Camera.SendCommand(Edsdk.CameraCommand_DriveLensEvf, (int) Edsdk.EvfDriveLens_Far1);
+                            Camera.SendCommand(Edsdk.CameraCommand_DriveLensEvf, (int)Edsdk.EvfDriveLens_Far1);
                             break;
                         case FocusAmount.Medium:
-                            Camera.SendCommand(Edsdk.CameraCommand_DriveLensEvf, (int) Edsdk.EvfDriveLens_Far2);
+                            Camera.SendCommand(Edsdk.CameraCommand_DriveLensEvf, (int)Edsdk.EvfDriveLens_Far2);
                             break;
                         case FocusAmount.Large:
-                            Camera.SendCommand(Edsdk.CameraCommand_DriveLensEvf, (int) Edsdk.EvfDriveLens_Far3);
+                            Camera.SendCommand(Edsdk.CameraCommand_DriveLensEvf, (int)Edsdk.EvfDriveLens_Far3);
                             break;
                         default:
                             throw new ArgumentOutOfRangeException(nameof(amount), amount, null);
@@ -1578,9 +1575,9 @@ namespace CameraControl.Devices.Canon
                         Camera.PauseLiveview();
                         Log.Debug("Camera.PauseLiveview();");
                         var transporter = new EosImageTransporter();
-                        transporter.ProgressEvent += (i) => TransferProgress = (uint) i;
+                        transporter.ProgressEvent += (i) => TransferProgress = (uint)i;
                         Log.Debug("TransportAsFileName");
-                        transporter.TransportAsFileName((IntPtr) o, filename, Camera.Handle);
+                        transporter.TransportAsFileName((IntPtr)o, filename, Camera.Handle);
                         Log.Debug("TransportAsFileName DONE");
                         Camera.ResumeLiveview();
                         Log.Debug("Camera.ResumeLiveview(); DONE");
@@ -1618,7 +1615,7 @@ namespace CameraControl.Devices.Canon
                     Log.Debug("Memory file transfer started");
                     try
                     {
-                        using (FileStream fileStream = File.Create(filename, (int) memory.ImageData.Length))
+                        using (FileStream fileStream = File.Create(filename, memory.ImageData.Length))
                         {
                             fileStream.Write(memory.ImageData, 0, memory.ImageData.Length);
                         }
@@ -1645,7 +1642,7 @@ namespace CameraControl.Devices.Canon
                 case OperationEnum.RecordMovie:
                     if (Camera.GetProperty(Edsdk.PropID_Record) == 4)
                         return "LabelRecordInProgres";
-                    if (Camera.LiveViewDevice==EosLiveViewDevice.None)
+                    if (Camera.LiveViewDevice == EosLiveViewDevice.None)
                         return "LabelWrongLiveViewType";
                     break;
                 case OperationEnum.AutoFocus:
@@ -1672,7 +1669,7 @@ namespace CameraControl.Devices.Canon
 
         public override AsyncObservableCollection<DeviceObject> GetObjects(object storageId, bool loadThumbs)
         {
-            List<DeviceObject> list = new List<DeviceObject>();
+            List<DeviceObject> list = [];
             int count = 0;
             Edsdk.EdsGetChildCount(Camera.Handle, out count);
             for (int i = 0; i < count; i++)
@@ -1698,7 +1695,7 @@ namespace CameraControl.Devices.Canon
         {
             int ChildCount;
             //get children of first pointer
-            List<DeviceObject> list = new List<DeviceObject>();
+            List<DeviceObject> list = [];
             Edsdk.EdsGetChildCount(ptr, out ChildCount);
             if (ChildCount > 0)
             {
@@ -1751,7 +1748,7 @@ namespace CameraControl.Devices.Canon
             return list;
         }
 
-        public void GetFile(string fileName,string outFileName)
+        public void GetFile(string fileName, string outFileName)
         {
             int count = 0;
             Edsdk.EdsGetChildCount(Camera.Handle, out count);
@@ -1770,11 +1767,11 @@ namespace CameraControl.Devices.Canon
             }
         }
 
-        private void GetFile(IntPtr ptr,string fileName, string outfileName)
+        private void GetFile(IntPtr ptr, string fileName, string outfileName)
         {
             int ChildCount;
             //get children of first pointer
-            List<DeviceObject> list = new List<DeviceObject>();
+            List<DeviceObject> list = [];
             Edsdk.EdsGetChildCount(ptr, out ChildCount);
             if (ChildCount > 0)
             {
@@ -1790,7 +1787,7 @@ namespace CameraControl.Devices.Canon
 
                     if (ChildInfo.isFolder == 0)
                     {
-                        if(ChildInfo.szFileName==fileName)
+                        if (ChildInfo.szFileName == fileName)
                         {
                             Camera._transporter.TransportAsFileName(ChildPtr, outfileName, Camera.Handle);
                         }
@@ -1824,8 +1821,8 @@ namespace CameraControl.Devices.Canon
             //calculate size, stride and buffersize
             outputSize.width = imageInfo.EffectiveRect.width;
             outputSize.height = imageInfo.EffectiveRect.height;
-            int Stride = ((outputSize.width*3) + 3) & ~3;
-            uint bufferSize = (uint) (outputSize.height*Stride);
+            int Stride = ((outputSize.width * 3) + 3) & ~3;
+            uint bufferSize = (uint)(outputSize.height * Stride);
 
             //Init buffer
             buffer = new Byte[bufferSize];
@@ -1836,7 +1833,7 @@ namespace CameraControl.Devices.Canon
                               stream);
 
             //makes RGB out of BGR
-            if (outputSize.width%4 == 0)
+            if (outputSize.width % 4 == 0)
             {
                 for (int t = 0; t < bufferSize; t += 3)
                 {
@@ -1847,15 +1844,15 @@ namespace CameraControl.Devices.Canon
             }
             else
             {
-                int Padding = Stride - (outputSize.width*3);
+                int Padding = Stride - (outputSize.width * 3);
                 for (int y = outputSize.height - 1; y > -1; y--)
                 {
-                    int RowStart = (outputSize.width*3)*y;
-                    int TargetStart = Stride*y;
+                    int RowStart = (outputSize.width * 3) * y;
+                    int TargetStart = Stride * y;
 
-                    Array.Copy(buffer, RowStart, buffer, TargetStart, outputSize.width*3);
+                    Array.Copy(buffer, RowStart, buffer, TargetStart, outputSize.width * 3);
 
-                    for (int t = TargetStart; t < TargetStart + (outputSize.width*3); t += 3)
+                    for (int t = TargetStart; t < TargetStart + (outputSize.width * 3); t += 3)
                     {
                         temp = buffer[t];
                         buffer[t] = buffer[t + 2];

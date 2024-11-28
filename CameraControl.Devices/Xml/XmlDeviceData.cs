@@ -28,11 +28,6 @@
 
 #region
 
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
 using System.Xml.Serialization;
 
 #endregion
@@ -62,9 +57,9 @@ namespace CameraControl.Devices.Xml
             if (File.Exists(filename))
             {
                 XmlSerializer mySerializer =
-                    new XmlSerializer(typeof (XmlDeviceData));
+                    new XmlSerializer(typeof(XmlDeviceData));
                 FileStream myFileStream = new FileStream(filename, FileMode.Open, FileAccess.Read);
-                photoSession = (XmlDeviceData) mySerializer.Deserialize(myFileStream);
+                photoSession = (XmlDeviceData)mySerializer.Deserialize(myFileStream);
                 myFileStream.Close();
             }
             return photoSession;
@@ -99,7 +94,7 @@ namespace CameraControl.Devices.Xml
             }
             return "";
         }
-        
+
         public bool PropertyExist(uint code)
         {
             return AvaiableProperties.Any(xmlPropertyDescriptor => xmlPropertyDescriptor.Code == code);

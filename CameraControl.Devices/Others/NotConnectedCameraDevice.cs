@@ -28,8 +28,8 @@
 
 #region
 
-using System.Text;
 using CameraControl.Devices.Classes;
+using System.Text;
 
 #endregion
 

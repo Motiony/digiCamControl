@@ -28,15 +28,10 @@
 
 #region
 
-using System;
-using System.Collections.Generic;
-using System.Threading;
 using CameraControl.Devices.Classes;
 using PortableDeviceLib;
 using System.Globalization;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 #endregion
 
@@ -234,9 +229,11 @@ namespace CameraControl.Devices.Nikon
         {
             lock (Locker)
             {
-                NormalIsoNumber = new PropertyValue<long>();
-                NormalIsoNumber.Name = "IsoNumber";
-                NormalIsoNumber.SubType = typeof(int);
+                NormalIsoNumber = new PropertyValue<long>
+                {
+                    Name = "IsoNumber",
+                    SubType = typeof(int)
+                };
                 NormalIsoNumber.ValueChanged += IsoNumber_ValueChanged;
                 NormalIsoNumber.Clear();
                 try
@@ -262,9 +259,11 @@ namespace CameraControl.Devices.Nikon
                     NormalIsoNumber.IsEnabled = false;
                 }
 
-                MovieIsoNumber = new PropertyValue<long>();
-                MovieIsoNumber.Name = "IsoNumber";
-                MovieIsoNumber.SubType = typeof(int);
+                MovieIsoNumber = new PropertyValue<long>
+                {
+                    Name = "IsoNumber",
+                    SubType = typeof(int)
+                };
                 MovieIsoNumber.ValueChanged += MovieIsoNumber_ValueChanged;
                 MovieIsoNumber.Clear();
                 try
@@ -308,11 +307,15 @@ namespace CameraControl.Devices.Nikon
 
         protected override void InitShutterSpeed()
         {
-            NormalShutterSpeed = new PropertyValue<long>();
-            NormalShutterSpeed.Name = "ShutterSpeed";
+            NormalShutterSpeed = new PropertyValue<long>
+            {
+                Name = "ShutterSpeed"
+            };
             NormalShutterSpeed.ValueChanged += ShutterSpeed_ValueChanged;
-            MovieShutterSpeed = new PropertyValue<long>();
-            MovieShutterSpeed.Name = "ShutterSpeed";
+            MovieShutterSpeed = new PropertyValue<long>
+            {
+                Name = "ShutterSpeed"
+            };
             MovieShutterSpeed.ValueChanged += MovieShutterSpeed_ValueChanged;
             ReInitShutterSpeed();
         }

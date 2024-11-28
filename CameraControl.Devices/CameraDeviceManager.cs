@@ -28,13 +28,7 @@
 
 #region
 
-using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.ExceptionServices;
-using System.Threading;
+using Accord.Video.DirectShow;
 using CameraControl.Devices.Canon;
 using CameraControl.Devices.Classes;
 using CameraControl.Devices.Custom;
@@ -46,10 +40,10 @@ using CameraControl.Devices.TransferProtocol.PtpIp;
 using CameraControl.Devices.Wifi;
 using Canon.Eos.Framework;
 using PortableDeviceLib;
-using WIA;
-using Accord.Video.DirectShow;
+using System.Collections.Concurrent;
 using System.Management;
-using System.Management.Instrumentation;
+using System.Runtime.ExceptionServices;
+using WIA;
 
 #endregion
 
@@ -61,10 +55,10 @@ namespace CameraControl.Devices
         private const int AppMajorVersionNumber = 1;
         private const int AppMinorVersionNumber = 0;
         private bool _connectionInProgress = false;
-        private DeviceDescriptorEnumerator _deviceEnumerator;
+        private readonly DeviceDescriptorEnumerator _deviceEnumerator;
         private EosFramework _framework;
-        private object _locker = new object();
-        private List<DeviceDescription> _deviceDescriptions = new List<DeviceDescription>();
+        private readonly object _locker = new object();
+        private readonly List<DeviceDescription> _deviceDescriptions = [];
 
         public ConcurrentDictionary<ICameraDevice, byte[]> LiveViewImage;
         public ConcurrentDictionary<ICameraDevice, string> LastCapturedImage;
@@ -226,26 +220,25 @@ namespace CameraControl.Devices
             WifiDeviceProviders.Add(new PanonoProvider());
             WifiDeviceProviders.Add(new OscProvider());
             WifiDeviceProviders.Add(new PtzOpticsProvider());
-            WifiDeviceProviders.Add(new GoProProvider());
             foreach (var type in CustomDeviceClass)
             {
                 DeviceClass.Add(type.Key, type.Value);
             }
         }
 
-        public CameraDeviceManager(string datafolder=null)
+        public CameraDeviceManager(string datafolder = null)
         {
             UseExperimentalDrivers = true;
             LoadWiaDevices = true;
             StartInNewThread = false;
             DetectWebcams = true;
-            CustomDeviceClass = new Dictionary<string, Type>();
+            CustomDeviceClass = [];
             SelectedCameraDevice = new NotConnectedCameraDevice();
-            ConnectedDevices = new AsyncObservableCollection<ICameraDevice>();
+            ConnectedDevices = [];
             _deviceEnumerator = new DeviceDescriptorEnumerator();
             LiveViewImage = new ConcurrentDictionary<ICameraDevice, byte[]>();
             LastCapturedImage = new ConcurrentDictionary<ICameraDevice, string>();
-            WifiDeviceProviders = new List<IWifiDeviceProvider>();
+            WifiDeviceProviders = [];
 
 
             // prevent program crash in something wrong with wia
@@ -274,7 +267,6 @@ namespace CameraControl.Devices
                     {
                         string deviceId = (string)device.GetPropertyValue("DeviceID");
                         string serialNr = deviceId.Substring(deviceId.LastIndexOf('\\')).Replace("\\", "");
-                        AddGoProCamera(serialNr);
                     }
                 }
                 collection.Dispose();
@@ -287,7 +279,7 @@ namespace CameraControl.Devices
             {
                 Log.Error("Error initialize GoPro USB support", ex);
             }
-            
+
 
 
             if (datafolder != null && Directory.Exists(datafolder))
@@ -322,16 +314,8 @@ namespace CameraControl.Devices
                     ICameraDevice camera = null;
                     foreach (ICameraDevice device in ConnectedDevices)
                     {
-                        GoProBaseCamera goProCamera = device as GoProBaseCamera;
-                        if (goProCamera != null)
-                        {
-                            if (goProCamera.SerialNumber == serialNr)
-                            {
-                                camera=device;
-                            }
-                        }
                     }
-                    if (camera!=null)
+                    if (camera != null)
                     {
                         DisconnectCamera(camera);
                     }
@@ -347,7 +331,7 @@ namespace CameraControl.Devices
         {
             ManagementEventWatcher watcher = new ManagementEventWatcher();
             WqlEventQuery insertQuery = new WqlEventQuery("SELECT * FROM " + verb + " WITHIN 2 WHERE TargetInstance ISA 'Win32_PnPEntity'");
-            watcher.EventArrived +=  eventHandler;
+            watcher.EventArrived += eventHandler;
             watcher.Query = insertQuery;
             watcher.Start();
         }
@@ -358,11 +342,10 @@ namespace CameraControl.Devices
             {
                 ManagementBaseObject instance = (ManagementBaseObject)e.NewEvent["TargetInstance"];
                 // GoPro camera ethernet emulator 
-                if ((string)instance.GetPropertyValue("Name")== "GoPro RNDIS Device")
+                if ((string)instance.GetPropertyValue("Name") == "GoPro RNDIS Device")
                 {
                     string deviceId = (string)instance.GetPropertyValue("DeviceID");
                     string serialNr = deviceId.Substring(deviceId.LastIndexOf('\\')).Replace("\\", "");
-                    AddGoProCamera(serialNr);
                 }
             }
             catch (Exception ex)
@@ -371,28 +354,6 @@ namespace CameraControl.Devices
             }
         }
 
-        private void AddGoProCamera(string serialNr)
-        {
-            bool added = false;
-            foreach (ICameraDevice device in ConnectedDevices)
-            {
-                GoProBaseCamera goProCamera = device as GoProBaseCamera;
-                if (goProCamera != null)
-                {
-                    if (goProCamera.SerialNumber == serialNr)
-                    {
-                        added = true;
-                    }
-                }
-            }
-            if (!added)
-            {
-                var provider = new GoProProvider();
-                string ip = string.Format("172.2{0}.1{1}.51", serialNr.Substring(serialNr.Length - 3, 1), serialNr.Substring(serialNr.Length - 2, 2));
-                Thread.Sleep(3000);
-                AddDevice(provider.Connect(ip));
-            }
-        }
         private void InitCanon()
         {
             try
@@ -430,7 +391,7 @@ namespace CameraControl.Devices
         {
             try
             {
-                List<string> monikers = new List<string>();
+                List<string> monikers = [];
                 var loaclWebCamsCollection = new FilterInfoCollection(FilterCategory.VideoInputDevice);
                 foreach (Accord.Video.DirectShow.FilterInfo localcamera in loaclWebCamsCollection)
                 {
@@ -494,8 +455,11 @@ namespace CameraControl.Devices
                         Log.Debug("New canon camera found !");
                         CanonSDKBase camera = new CanonSDKBase();
                         Log.Debug("Pas 1");
-                        DeviceDescriptor descriptor = new DeviceDescriptor {EosCamera = eosCamera};
-                        descriptor.CameraDevice = camera;
+                        DeviceDescriptor descriptor = new DeviceDescriptor
+                        {
+                            EosCamera = eosCamera,
+                            CameraDevice = camera
+                        };
                         Log.Debug("Pas 2");
                         camera.Init(eosCamera);
                         Log.Debug("Pas 3");
@@ -517,7 +481,7 @@ namespace CameraControl.Devices
             if (_deviceEnumerator.GetByWiaId(devInfo.DeviceID) != null)
                 return _deviceEnumerator.GetByWiaId(devInfo.DeviceID).CameraDevice;
             _deviceEnumerator.RemoveDisconnected();
-            DeviceDescriptor descriptor = new DeviceDescriptor {WiaDeviceInfo = devInfo, WiaId = devInfo.DeviceID};
+            DeviceDescriptor descriptor = new DeviceDescriptor { WiaDeviceInfo = devInfo, WiaId = devInfo.DeviceID };
 
             ICameraDevice cameraDevice = new WiaCameraDevice();
             bool isConnected = cameraDevice.Init(descriptor);
@@ -545,7 +509,7 @@ namespace CameraControl.Devices
             {
                 DisconnectCamera(e.EosCamera);
             }
-            OnCameraDisconnected((ICameraDevice) sender);
+            OnCameraDisconnected((ICameraDevice)sender);
         }
 
         /// <summary>
@@ -582,7 +546,7 @@ namespace CameraControl.Devices
             }
             _deviceEnumerator.RemoveDisconnected();
 
-            Log.Debug("Connection device start" );
+            Log.Debug("Connection device start");
             try
             {
                 var devices = PortableDeviceCollection.Instance.Devices;
@@ -602,8 +566,8 @@ namespace CameraControl.Devices
                         GetNativeDriver(portableDevice.Model) != null)
                     {
                         ICameraDevice cameraDevice;
-                        DeviceDescriptor descriptor = new DeviceDescriptor {WpdId = portableDevice.DeviceId};
-                        cameraDevice = (ICameraDevice) Activator.CreateInstance(GetNativeDriver(portableDevice.Model));
+                        DeviceDescriptor descriptor = new DeviceDescriptor { WpdId = portableDevice.DeviceId };
+                        cameraDevice = (ICameraDevice)Activator.CreateInstance(GetNativeDriver(portableDevice.Model));
                         MtpProtocol device = new MtpProtocol(descriptor.WpdId);
                         device.ConnectToDevice(AppName, AppMajorVersionNumber, AppMinorVersionNumber);
 
@@ -629,7 +593,7 @@ namespace CameraControl.Devices
                         if (description != null)
                         {
                             CustomDevice cameraDevice = new CustomDevice();
-                            DeviceDescriptor descriptor = new DeviceDescriptor {WpdId = portableDevice.DeviceId};
+                            DeviceDescriptor descriptor = new DeviceDescriptor { WpdId = portableDevice.DeviceId };
                             MtpProtocol device = new MtpProtocol(descriptor.WpdId);
                             device.ConnectToDevice(AppName, AppMajorVersionNumber, AppMinorVersionNumber);
 
@@ -674,9 +638,9 @@ namespace CameraControl.Devices
 
         public void ConnectToServer(string s, int type)
         {
-            if(string.IsNullOrEmpty(s))
+            if (string.IsNullOrEmpty(s))
                 return;
-            
+
             if (type == 0)
             {
                 int port = 15740;
@@ -723,8 +687,8 @@ namespace CameraControl.Devices
                 if (GetNativeDriver(protocol.Model) != null)
                 {
                     ICameraDevice cameraDevice;
-                    DeviceDescriptor descriptor = new DeviceDescriptor {WpdId = "ddserver"};
-                    cameraDevice = (ICameraDevice) Activator.CreateInstance(GetNativeDriver(protocol.Model));
+                    DeviceDescriptor descriptor = new DeviceDescriptor { WpdId = "ddserver" };
+                    cameraDevice = (ICameraDevice)Activator.CreateInstance(GetNativeDriver(protocol.Model));
                     descriptor.StillImageDevice = protocol;
 
                     //cameraDevice.SerialNumber = StaticHelper.GetSerial(portableDevice.DeviceId);
@@ -999,7 +963,7 @@ namespace CameraControl.Devices
             if (DeviceClass == null || DeviceClass.Count == 0)
                 PopulateDeviceClass();
 
-            if(DetectWebcams)
+            if (DetectWebcams)
                 AddWebcameras();
 
             if (!DisableNativeDrivers)

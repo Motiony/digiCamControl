@@ -1,6 +1,4 @@
-﻿using System.IO;
-
-namespace CameraControl.Devices.TransferProtocol.PtpIp
+﻿namespace CameraControl.Devices.TransferProtocol.PtpIp
 {
     public class DataPacket : BaseCmd
     {
@@ -9,7 +7,7 @@ namespace CameraControl.Devices.TransferProtocol.PtpIp
         {
             TransactionID = (uint)(readByte(s) | (readByte(s) << 8) | (readByte(s) << 16) | (readByte(s) << 24));
             Data = new byte[Header.Length - 8 - 4];
-            s.Read(Data, 0, (int) (Header.Length - 8 - 4));
+            s.Read(Data, 0, (int)(Header.Length - 8 - 4));
         }
     }
 }

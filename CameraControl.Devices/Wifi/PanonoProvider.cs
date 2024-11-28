@@ -1,10 +1,9 @@
-﻿using System;
-using CameraControl.Devices.Classes;
+﻿using CameraControl.Devices.Classes;
 using PanonoTest;
 
 namespace CameraControl.Devices.Wifi
 {
-    public class PanonoProvider:IWifiDeviceProvider
+    public class PanonoProvider : IWifiDeviceProvider
     {
         public DeviceDescriptor Connect(string address)
         {

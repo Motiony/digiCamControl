@@ -1,25 +1,17 @@
-﻿using System;
-using System.CodeDom;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading;
-using CameraControl.Devices.Classes;
+﻿using CameraControl.Devices.Classes;
 using PortableDeviceLib;
-using PortableDeviceLib.Model;
+using System.Runtime.InteropServices;
 
 namespace CameraControl.Devices.Custom
 {
-    public class CustomDevice:BaseMTPCamera
+    public class CustomDevice : BaseMTPCamera
     {
         public CustomDevice()
         {
-            
+
         }
 
-        public bool Init(DeviceDescriptor deviceDescriptor,DeviceDescription description)
+        public bool Init(DeviceDescriptor deviceDescriptor, DeviceDescription description)
         {
             base.Init(deviceDescriptor);
             StillImageDevice imageDevice = StillImageDevice as StillImageDevice;
@@ -43,7 +35,7 @@ namespace CameraControl.Devices.Custom
                             value.AddValues(propertyValue.Name, propertyValue.Value);
                         }
                         value.ValueChanged += value_ValueChanged;
-                        
+
                         AdvancedProperties.Add(value);
                     }
                     catch (Exception ex)
@@ -81,7 +73,7 @@ namespace CameraControl.Devices.Custom
 
         public override void TransferFile(object o, Stream stream)
         {
-            ((StillImageDevice) StillImageDevice).SaveFile((string) o, stream);
+            ((StillImageDevice)StillImageDevice).SaveFile((string)o, stream);
         }
 
         public override void CapturePhoto()
@@ -90,7 +82,7 @@ namespace CameraControl.Devices.Custom
             try
             {
                 IsBusy = true;
-                ErrorCodes.GetException( ExecuteWithNoData(CONST_CMD_InitiateCapture));
+                ErrorCodes.GetException(ExecuteWithNoData(CONST_CMD_InitiateCapture));
             }
             catch (COMException comException)
             {
@@ -105,7 +97,7 @@ namespace CameraControl.Devices.Custom
             finally
             {
                 Monitor.Exit(Locker);
-            }    
+            }
         }
     }
 }

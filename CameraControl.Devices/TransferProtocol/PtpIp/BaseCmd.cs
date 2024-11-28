@@ -1,5 +1,4 @@
-﻿using System.IO;
-using CameraControl.Devices.TransferProtocol.DDServer;
+﻿using CameraControl.Devices.TransferProtocol.DDServer;
 
 namespace CameraControl.Devices.TransferProtocol.PtpIp
 {
@@ -12,7 +11,7 @@ namespace CameraControl.Devices.TransferProtocol.PtpIp
         {
             Header = new PtpIpHeader();
         }
-        
+
         public virtual void Write(Stream s)
         {
 
@@ -20,7 +19,7 @@ namespace CameraControl.Devices.TransferProtocol.PtpIp
 
         public virtual void Read(Stream s)
         {
-            
+
         }
 
         public void WriteInt(uint val, Stream s)

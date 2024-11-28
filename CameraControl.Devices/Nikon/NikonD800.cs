@@ -28,12 +28,9 @@
 
 #region
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using CameraControl.Devices.Classes;
 using PortableDeviceLib;
+using System.Text;
 
 #endregion
 
@@ -202,7 +199,7 @@ namespace CameraControl.Devices.Nikon
             ExecuteWithNoData(CONST_CMD_EndLiveView);
             DeviceReady();
             ExecuteWithNoData(CONST_CMD_ChangeCameraMode, 1);
-            SetProperty(CONST_CMD_SetDevicePropValue, BitConverter.GetBytes((UInt16) 0x0001),
+            SetProperty(CONST_CMD_SetDevicePropValue, BitConverter.GetBytes((UInt16)0x0001),
                         CONST_PROP_ExposureProgramMode);
             SetProperty(CONST_CMD_SetDevicePropValue, BitConverter.GetBytes(0xFFFFFFFF),
                         CONST_PROP_ExposureTime);
@@ -237,14 +234,14 @@ namespace CameraControl.Devices.Nikon
 
         public override void StartRecordMovie()
         {
-            SetProperty(CONST_CMD_SetDevicePropValue, new[] {(byte) 1}, CONST_PROP_ApplicationMode);
+            SetProperty(CONST_CMD_SetDevicePropValue, new[] { (byte)1 }, CONST_PROP_ApplicationMode);
             base.StartRecordMovie();
         }
 
         public override void StopRecordMovie()
         {
             base.StopRecordMovie();
-            SetProperty(CONST_CMD_SetDevicePropValue, new[] {(byte) 0}, CONST_PROP_ApplicationMode);
+            SetProperty(CONST_CMD_SetDevicePropValue, new[] { (byte)0 }, CONST_PROP_ApplicationMode);
         }
 
         protected override void GetAdditionalLiveViewData(LiveViewData viewData, byte[] result)
@@ -303,11 +300,15 @@ namespace CameraControl.Devices.Nikon
 
         protected override void InitShutterSpeed()
         {
-            NormalShutterSpeed = new PropertyValue<long>();
-            NormalShutterSpeed.Name = "ShutterSpeed";
+            NormalShutterSpeed = new PropertyValue<long>
+            {
+                Name = "ShutterSpeed"
+            };
             NormalShutterSpeed.ValueChanged += ShutterSpeed_ValueChanged;
-            MovieShutterSpeed = new PropertyValue<long>();
-            MovieShutterSpeed.Name = "ShutterSpeed";
+            MovieShutterSpeed = new PropertyValue<long>
+            {
+                Name = "ShutterSpeed"
+            };
             MovieShutterSpeed.ValueChanged += MovieShutterSpeed_ValueChanged;
             ReInitShutterSpeed();
         }

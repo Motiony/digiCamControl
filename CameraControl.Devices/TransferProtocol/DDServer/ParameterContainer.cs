@@ -1,7 +1,4 @@
-﻿using System.IO;
-using ddserverTest;
-
-namespace CameraControl.Devices.TransferProtocol.DDServer
+﻿namespace CameraControl.Devices.TransferProtocol.DDServer
 {
     public class ParameterContainer : Container
     {
@@ -20,7 +17,7 @@ namespace CameraControl.Devices.TransferProtocol.DDServer
 
         protected int payloadLength
         {
-            get { return (Parameters == null) ? 0 : Parameters.Length*4; }
+            get { return (Parameters == null) ? 0 : Parameters.Length * 4; }
         }
 
         public override void WritePayload(Stream s)
@@ -29,10 +26,10 @@ namespace CameraControl.Devices.TransferProtocol.DDServer
             {
                 for (int i = 0; i < Parameters.Length; i++)
                 {
-                    s.WriteByte((byte) (0xff & Parameters[i]));
-                    s.WriteByte((byte) (0xff & (Parameters[i] >> 8)));
-                    s.WriteByte((byte) (0xff & (Parameters[i] >> 16)));
-                    s.WriteByte((byte) (0xff & (Parameters[i] >> 24)));
+                    s.WriteByte((byte)(0xff & Parameters[i]));
+                    s.WriteByte((byte)(0xff & (Parameters[i] >> 8)));
+                    s.WriteByte((byte)(0xff & (Parameters[i] >> 16)));
+                    s.WriteByte((byte)(0xff & (Parameters[i] >> 24)));
                 }
             }
         }

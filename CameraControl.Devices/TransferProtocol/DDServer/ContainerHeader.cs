@@ -1,7 +1,4 @@
-﻿using System;
-using System.IO;
-
-namespace CameraControl.Devices.TransferProtocol.DDServer
+﻿namespace CameraControl.Devices.TransferProtocol.DDServer
 {
     public class ContainerHeader
     {
@@ -40,7 +37,7 @@ namespace CameraControl.Devices.TransferProtocol.DDServer
                 throw new ArgumentNullException("stream");
 
             Length = readByte(stream) | (readByte(stream) << 8) | (readByte(stream) << 16) | (readByte(stream) << 24);
-            ContainerType = (ContainerType) readByte(stream);
+            ContainerType = (ContainerType)readByte(stream);
             //byte 5 skipped
             readByte(stream);
             Code = readByte(stream) | (readByte(stream) << 8);
@@ -64,18 +61,18 @@ namespace CameraControl.Devices.TransferProtocol.DDServer
 
         public void Write(Stream s)
         {
-            s.WriteByte((byte) (0xff & Length));
-            s.WriteByte((byte) (0xff & (Length >> 8)));
-            s.WriteByte((byte) (0xff & (Length >> 16)));
-            s.WriteByte((byte) (0xff & (Length >> 24)));
-            s.WriteByte((byte) (0xff & (int) ContainerType));
+            s.WriteByte((byte)(0xff & Length));
+            s.WriteByte((byte)(0xff & (Length >> 8)));
+            s.WriteByte((byte)(0xff & (Length >> 16)));
+            s.WriteByte((byte)(0xff & (Length >> 24)));
+            s.WriteByte((byte)(0xff & (int)ContainerType));
             s.WriteByte(0);
-            s.WriteByte((byte) (0xff & Code));
-            s.WriteByte((byte) (0xff & (Code >> 8)));
-            s.WriteByte((byte) (0xff & TransactionID));
-            s.WriteByte((byte) (0xff & (TransactionID >> 8)));
-            s.WriteByte((byte) (0xff & (TransactionID >> 16)));
-            s.WriteByte((byte) (0xff & (TransactionID >> 24)));
+            s.WriteByte((byte)(0xff & Code));
+            s.WriteByte((byte)(0xff & (Code >> 8)));
+            s.WriteByte((byte)(0xff & TransactionID));
+            s.WriteByte((byte)(0xff & (TransactionID >> 8)));
+            s.WriteByte((byte)(0xff & (TransactionID >> 16)));
+            s.WriteByte((byte)(0xff & (TransactionID >> 24)));
         }
     }
 }

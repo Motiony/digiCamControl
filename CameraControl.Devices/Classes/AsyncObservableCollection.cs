@@ -28,15 +28,11 @@
 
 #region
 
-using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
-using System.Windows.Data;
 using System.ComponentModel;
-using System.Linq;
-using System.Threading;
+using System.Windows.Data;
 using System.Windows.Threading;
 
 #endregion
@@ -45,7 +41,7 @@ namespace CameraControl.Devices.Classes
 {
     public class AsyncObservableCollection<T> : ObservableCollection<T>
     {
-        private SynchronizationContext _synchronizationContext = SynchronizationContext.Current;
+        private readonly SynchronizationContext _synchronizationContext = SynchronizationContext.Current;
 
         public AsyncObservableCollection()
         {
@@ -65,7 +61,7 @@ namespace CameraControl.Devices.Classes
             // We are in the creator thread, call the base implementation directly
             try
             {
-                base.OnCollectionChanged((NotifyCollectionChangedEventArgs) param);
+                base.OnCollectionChanged((NotifyCollectionChangedEventArgs)param);
             }
             catch (Exception)
             {
@@ -90,11 +86,11 @@ namespace CameraControl.Devices.Classes
         private void RaisePropertyChanged(object param)
         {
             // We are in the creator thread, call the base implementation directly
-            base.OnPropertyChanged((PropertyChangedEventArgs) param);
+            base.OnPropertyChanged((PropertyChangedEventArgs)param);
         }
 
         public override event NotifyCollectionChangedEventHandler CollectionChanged;
-        private static object _syncLock = new object();
+        private static readonly object _syncLock = new object();
 
 
         protected override void OnCollectionChanged(NotifyCollectionChangedEventArgs e)
@@ -113,7 +109,7 @@ namespace CameraControl.Devices.Classes
 
                     if (dispatcher != null && dispatcher.CheckAccess() == false)
                     {
-                        dispatcher.Invoke(DispatcherPriority.DataBind, (Action)(() => OnCollectionChanged(e)));
+                        dispatcher.Invoke(DispatcherPriority.DataBind, () => OnCollectionChanged(e));
                     }
                     else
                     {
@@ -124,7 +120,7 @@ namespace CameraControl.Devices.Classes
                 }
                 catch (Exception)
                 {
-                    
+
                 }
             }
         }

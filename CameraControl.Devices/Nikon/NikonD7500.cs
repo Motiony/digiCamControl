@@ -1,15 +1,6 @@
-﻿using CameraControl.Devices.Classes;
-using PortableDeviceLib;
-using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace CameraControl.Devices.Nikon
+﻿namespace CameraControl.Devices.Nikon
 {
-    public class NikonD7500: NikonD7100
+    public class NikonD7500 : NikonD7100
     {
         public NikonD7500()
         {

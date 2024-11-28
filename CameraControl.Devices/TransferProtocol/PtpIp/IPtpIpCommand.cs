@@ -1,6 +1,4 @@
-﻿using System.IO;
-
-namespace CameraControl.Devices.TransferProtocol.PtpIp
+﻿namespace CameraControl.Devices.TransferProtocol.PtpIp
 {
     public interface IPtpIpCommand
     {

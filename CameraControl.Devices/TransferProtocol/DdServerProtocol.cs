@@ -1,9 +1,7 @@
-﻿using System;
-using System.IO;
-using System.Text;
-using CameraControl.Devices.TransferProtocol.DDServer;
-using PortableDeviceLib;
+﻿using CameraControl.Devices.TransferProtocol.DDServer;
 using ddserverTest;
+using PortableDeviceLib;
+using System.Text;
 
 namespace CameraControl.Devices.TransferProtocol
 {
@@ -22,7 +20,7 @@ namespace CameraControl.Devices.TransferProtocol
         public string DeviceId { get; private set; }
 
 
-        public MTPDataResponse ExecuteReadBigData(uint code,Stream stream ,StillImageDevice.TransferCallback callback, params uint[] parameters)
+        public MTPDataResponse ExecuteReadBigData(uint code, Stream stream, StillImageDevice.TransferCallback callback, params uint[] parameters)
         {
             lock (_syncRoot)
             {
@@ -51,17 +49,17 @@ namespace CameraControl.Devices.TransferProtocol
                 ReconnectIfNeeded();
                 DataBlockContainer data;
                 var res = new MTPDataResponse();
-                _client.Write(new CommandBlockContainer((int) code, parameters));
+                _client.Write(new CommandBlockContainer((int)code, parameters));
                 int len = _client.ReadInt();
                 Container resp = _client.ReadContainer();
                 if (resp.Header.Length >= len - 4)
                 {
-                    return new MTPDataResponse() {ErrorCode = (uint) resp.Header.Code};
+                    return new MTPDataResponse() { ErrorCode = (uint)resp.Header.Code };
                 }
 
-                data = (DataBlockContainer) resp;
+                data = (DataBlockContainer)resp;
                 resp = _client.ReadContainer();
-                return new MTPDataResponse() {Data = data.Payload, ErrorCode = (uint) data.Header.Code};
+                return new MTPDataResponse() { Data = data.Payload, ErrorCode = (uint)data.Header.Code };
             }
         }
 
@@ -70,16 +68,16 @@ namespace CameraControl.Devices.TransferProtocol
             lock (_syncRoot)
             {
                 ReconnectIfNeeded();
-                _client.Write(new CommandBlockContainer((int) code, parameters));
+                _client.Write(new CommandBlockContainer((int)code, parameters));
                 int len = _client.ReadInt();
                 Container resp = _client.ReadContainer();
                 if (resp.Header.Length >= len - 4)
                 {
-                    return (uint) resp.Header.Code;
+                    return (uint)resp.Header.Code;
                 }
 
                 resp = _client.ReadContainer();
-                return (uint) resp.Header.Code;
+                return (uint)resp.Header.Code;
             }
         }
 
@@ -173,25 +171,25 @@ namespace CameraControl.Devices.TransferProtocol
                 index += 2;
             }
             index += 2;
-            int strlen1 = res.Data[index]*2;
+            int strlen1 = res.Data[index] * 2;
             index += 1;
-            Manufacturer = Encoding.Unicode.GetString(res.Data, index, strlen1-2);
+            Manufacturer = Encoding.Unicode.GetString(res.Data, index, strlen1 - 2);
             index += strlen1;
             int strlen2 = res.Data[index] * 2;
             index += 1;
-            Model = Encoding.Unicode.GetString(res.Data, index, strlen2-2);
+            Model = Encoding.Unicode.GetString(res.Data, index, strlen2 - 2);
             index += strlen2;
             int strlen3 = res.Data[index] * 2;
             index += 1;
             index += strlen3;
             int strlen4 = res.Data[index] * 2;
             index += 1;
-            SerialNumber = Encoding.Unicode.GetString(res.Data, index, strlen4-2);
+            SerialNumber = Encoding.Unicode.GetString(res.Data, index, strlen4 - 2);
         }
 
         private void ReconnectIfNeeded()
         {
-            if(!_client.IsConnected())
+            if (!_client.IsConnected())
             {
                 _client.Reconnect();
                 Init(_client);

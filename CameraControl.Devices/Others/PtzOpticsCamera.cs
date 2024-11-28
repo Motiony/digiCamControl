@@ -1,17 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Sockets;
-using System.Text;
-using System.Threading.Tasks;
-using CameraControl.Devices.Classes;
+﻿using CameraControl.Devices.Classes;
 using PortableDeviceLib;
 
 namespace CameraControl.Devices.Others
 {
     public class PtzOpticsCamera : BaseCameraDevice
     {
-        private string _address = "";
+        private readonly string _address = "";
 
         public PtzOpticsCamera(string ip)
         {
@@ -45,7 +39,7 @@ namespace CameraControl.Devices.Others
 
         public override string GetLiveViewStream()
         {
-            return "rtsp://"+_address+"/1";
+            return "rtsp://" + _address + "/1";
         }
 
         public override void StartLiveView()
@@ -60,7 +54,7 @@ namespace CameraControl.Devices.Others
 
         public override void CapturePhoto()
         {
-            var url = "http://"+_address+"/snapshot.jpg";
+            var url = "http://" + _address + "/snapshot.jpg";
             PhotoCapturedEventArgs args = new PhotoCapturedEventArgs
             {
                 WiaImageItem = null,
@@ -75,7 +69,7 @@ namespace CameraControl.Devices.Others
         public override void TransferFile(object o, string filename)
         {
             TransferProgress = 0;
-            HttpHelper.DownLoadFileByWebRequest(((string)o) , filename, this);
+            HttpHelper.DownLoadFileByWebRequest(((string)o), filename, this);
         }
     }
 

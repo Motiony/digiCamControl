@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using CameraControl.Devices.Classes;
+﻿using CameraControl.Devices.Classes;
 using CameraControl.Devices.Sony;
 using SonyCameraCommunication;
 
@@ -28,8 +23,11 @@ namespace CameraControl.Devices.Wifi
                     camera.Init(info.Endpoints["camera"]);
                     camera.DeviceName = info.FriendlyName;
                     camera.SerialNumber = info.UDN;
-                    DeviceDescriptor descriptor = new DeviceDescriptor { WpdId = "SonyWifiCamera" };
-                    descriptor.CameraDevice = camera;
+                    DeviceDescriptor descriptor = new DeviceDescriptor
+                    {
+                        WpdId = "SonyWifiCamera",
+                        CameraDevice = camera
+                    };
                     //cameraDevice.SerialNumber = StaticHelper.GetSerial(portableDevice.DeviceId);
                     return descriptor;
                 }

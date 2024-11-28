@@ -1,6 +1,4 @@
-﻿using System.IO;
-
-namespace CameraControl.Devices.TransferProtocol.DDServer
+﻿namespace CameraControl.Devices.TransferProtocol.DDServer
 {
     public abstract class Container
     {

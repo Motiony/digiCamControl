@@ -1,19 +1,13 @@
-﻿using System;
-using System.Linq;
-using System.Net;
+﻿using Rssdp;
+using Rssdp.Infrastructure;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
-using System.Text;
-using System.Threading;
-using System.Windows;
-using Rssdp;
-using Rssdp.Infrastructure;
 
 namespace CameraControl.Devices.Wifi
 {
     public class PanonoDiscovery
     {
-        
+
 
         public string EndPoint { get; set; }
 

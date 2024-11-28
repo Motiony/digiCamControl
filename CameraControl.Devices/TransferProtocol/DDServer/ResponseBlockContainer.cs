@@ -1,6 +1,4 @@
-﻿using System;
-using System.IO;
-using CameraControl.Devices.TransferProtocol.DDServer;
+﻿using CameraControl.Devices.TransferProtocol.DDServer;
 
 namespace ddserverTest
 {
@@ -40,13 +38,13 @@ namespace ddserverTest
             int pLength = Header.PayloadLength;
             if (pLength < 0)
                 throw new InvalidContainerException("Invalid container length");
-            if ((pLength%4) != 0)
+            if ((pLength % 4) != 0)
                 throw new InvalidContainerException("Response payload length must by multiplier of 4");
             if (pLength > 20)
                 throw new InvalidContainerException("Response datasets may have at most five parameters");
 
             int i = 0;
-            Parameters = new uint[pLength/4];
+            Parameters = new uint[pLength / 4];
             while (i < Parameters.Length)
             {
                 Parameters[i++] =

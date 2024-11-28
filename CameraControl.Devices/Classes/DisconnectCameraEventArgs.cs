@@ -28,10 +28,8 @@
 
 #region
 
-using System;
 using CameraControl.Devices.TransferProtocol;
 using Canon.Eos.Framework;
-using PortableDeviceLib;
 
 #endregion
 

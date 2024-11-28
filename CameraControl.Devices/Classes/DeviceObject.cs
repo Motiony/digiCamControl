@@ -28,8 +28,6 @@
 
 #region
 
-using System;
-
 #endregion
 
 namespace CameraControl.Devices.Classes

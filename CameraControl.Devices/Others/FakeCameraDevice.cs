@@ -28,12 +28,6 @@
 
 #region
 
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
-using System.Threading.Tasks;
-using Accord;
 using CameraControl.Devices.Classes;
 
 #endregion
@@ -44,7 +38,7 @@ namespace CameraControl.Devices.Others
     {
         #region Implementation of ICameraDevice
 
-        
+
 
         public override bool Init(DeviceDescriptor deviceDescriptor)
         {
@@ -54,7 +48,7 @@ namespace CameraControl.Devices.Others
         public override void CapturePhoto()
         {
             List<string> files = new List<string>(
-                Directory.GetFiles(Environment.GetFolderPath(Environment.SpecialFolder.MyPictures), "*."+ CompressionSetting.Value));
+                Directory.GetFiles(Environment.GetFolderPath(Environment.SpecialFolder.MyPictures), "*." + CompressionSetting.Value));
             if (files.Count > 0)
             {
                 Random rnd1 = new Random();
@@ -82,18 +76,18 @@ namespace CameraControl.Devices.Others
 
         public override void TransferFile(object o, Stream stream)
         {
-                var b = File.ReadAllBytes((string) o);
-                stream.Write(b, 0, b.Length);
+            var b = File.ReadAllBytes((string)o);
+            stream.Write(b, 0, b.Length);
         }
 
         public override void TransferFile(object o, string filename)
         {
-            File.Copy((string) o, filename);
+            File.Copy((string)o, filename);
         }
 
         #endregion
 
-        private LiveViewData _liveViewData = new LiveViewData();
+        private readonly LiveViewData _liveViewData = new LiveViewData();
 
         public FakeCameraDevice()
         {
@@ -104,22 +98,22 @@ namespace CameraControl.Devices.Others
             IsConnected = true;
             HaveLiveView = false;
             ExposureStatus = 1;
-            ExposureCompensation = new PropertyValue<long>() {IsEnabled = false};
-            Mode = new PropertyValue<long> {IsEnabled = false};
-            FNumber = new PropertyValue<long> {IsEnabled = false};
-            ShutterSpeed = new PropertyValue<long> {IsEnabled = false};
-            WhiteBalance = new PropertyValue<long> {IsEnabled = false};
-            FocusMode = new PropertyValue<long> {IsEnabled = false};
+            ExposureCompensation = new PropertyValue<long>() { IsEnabled = false };
+            Mode = new PropertyValue<long> { IsEnabled = false };
+            FNumber = new PropertyValue<long> { IsEnabled = false };
+            ShutterSpeed = new PropertyValue<long> { IsEnabled = false };
+            WhiteBalance = new PropertyValue<long> { IsEnabled = false };
+            FocusMode = new PropertyValue<long> { IsEnabled = false };
 
-            CompressionSetting = new PropertyValue<long> {IsEnabled = true};
-            CompressionSetting.AddValues("jpg",0);
+            CompressionSetting = new PropertyValue<long> { IsEnabled = true };
+            CompressionSetting.AddValues("jpg", 0);
             CompressionSetting.AddValues("cr2", 1);
             CompressionSetting.AddValues("nef", 2);
             CompressionSetting.Value = "jpg";
             CompressionSetting.ReloadValues();
 
-            IsoNumber = new PropertyValue<long> {IsEnabled = true};
-            ExposureMeteringMode = new PropertyValue<long> {IsEnabled = false};
+            IsoNumber = new PropertyValue<long> { IsEnabled = true };
+            ExposureMeteringMode = new PropertyValue<long> { IsEnabled = false };
             Battery = 100;
             Capabilities.Add(CapabilityEnum.CaptureNoAf);
             Capabilities.Add(CapabilityEnum.LiveView);
@@ -134,7 +128,7 @@ namespace CameraControl.Devices.Others
             IsoNumber.Value = "100";
             IsoNumber.ReloadValues();
 
-            var val = new PropertyValue<long>() {Name = "Test Test"};
+            var val = new PropertyValue<long>() { Name = "Test Test" };
             val.AddValues("Val 1", 1);
             val.AddValues("Val 2", 2);
             val.AddValues("Val 3", 3);
@@ -154,19 +148,19 @@ namespace CameraControl.Devices.Others
             _liveViewData.LiveViewImageWidth = 639;
             _liveViewData.ImageWidth = 639;
             _liveViewData.ImageHeight = 639;
-            _liveViewData.FocusX = 639/2;
+            _liveViewData.FocusX = 639 / 2;
             _liveViewData.FocusY = 639 / 2;
         }
 
         public override void StopLiveView()
         {
-            
+
         }
 
         public override string GetLiveViewStream()
         {
             return "rtsp://freja.hiof.no:1935/rtplive/definst/hessdalen03.stream";
-           // return "rtsp://173.12.1.249/1";
+            // return "rtsp://173.12.1.249/1";
         }
 
         public override LiveViewData GetLiveViewImage()
@@ -174,7 +168,7 @@ namespace CameraControl.Devices.Others
             _liveViewData.SoundL++;
             if (_liveViewData.SoundL > 99)
                 _liveViewData.SoundL = 0;
-             
+
             _liveViewData.SoundR++;
             if (_liveViewData.SoundR > 99)
                 _liveViewData.SoundR = 0;
@@ -204,6 +198,6 @@ namespace CameraControl.Devices.Others
         //    StringBuilder c = new StringBuilder(base.ToString() + "\n\tType..................Fake");
         //    return c.ToString();
         //}
-        
+
     }
 }
